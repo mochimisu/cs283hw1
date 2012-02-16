@@ -1,14 +1,16 @@
-// Simple OpenGL example for CS184 sp08 by Trevor Standley, modified from sample code for CS184 on Sp06
+/*
+ * CS283 HW1
+ *
+ * Simulation
+ *
+ * Created on: February 15, 2012
+ *     Author: bmwang, yglee
+ */
+
 #include <vector>
 #include <iostream>
 #include <fstream>
 #include <cmath>
-
-#ifdef _WIN32
-#	include <windows.h>
-#else
-#	include <sys/time.h>
-#endif
 
 #ifdef OSX
 #include <GLUT/glut.h>
@@ -21,28 +23,15 @@
 #include <algebra3.h>
 #include "vertex.h"
 #include "triangle.h"
+#include "viewport.h"
 
 #include <time.h>
 #include <math.h>
 
-#ifdef _WIN32
-static DWORD lastTime;
-#else
 static struct timeval lastTime;
-#endif
 
 #define PI 3.14159265
 
-using namespace std;
-
-
-//****************************************************
-// Some Classes
-//****************************************************
-class Viewport {
-  public:
-    int w, h; // width and height
-};
 
 
 //****************************************************
@@ -57,9 +46,11 @@ void myReshape(int w, int h) {
   viewport.w = w;
   viewport.h = h;
 
-  glViewport(0,0,viewport.w,viewport.h);// sets the rectangle that will be the window
+  // sets the rectangle that will be the window
+  glViewport(0,0,viewport.w,viewport.h);
   glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();				// loading the identity matrix for the screen
+  // loading the identity matrix for the screen
+  glLoadIdentity();
 
   //----------- setting the projection -------------------------
   // glOrtho sets left, right, bottom, top, zNear, zFar of the chord system
@@ -137,7 +128,7 @@ float basey = -sqrt(0.48f);					// height of triangle = sqrt(.8^2-.4^2)
   //-----------------------------------------------------------------------
 
   glFlush();
-  glutSwapBuffers();					// swap buffers (we earlier set double buffer)
+  glutSwapBuffers();
 }
 
 
@@ -147,7 +138,8 @@ float basey = -sqrt(0.48f);					// height of triangle = sqrt(.8^2-.4^2)
 void myFrameMove() {
   //nothing here for now
 #ifdef _WIN32
-  Sleep(10);						//give ~10ms back to OS (so as not to waste the CPU)
+  //give ~10ms back to OS (so as not to waste the CPU)
+  Sleep(10);
 #endif
   glutPostRedisplay(); // forces glut to call the display function (myDisplay())
 }
@@ -170,14 +162,19 @@ int main(int argc, char *argv[]) {
   //The size and position of the window
   glutInitWindowSize(viewport.w, viewport.h);
   glutInitWindowPosition(0, 0);
-  glutCreateWindow("CS184!");
+  glutCreateWindow("CS283 HW1");
 
-  initScene();							// quick function to set up scene
+  //Set up the scene
+  initScene();
 
-  glutDisplayFunc(myDisplay);				// function to run when its time to draw something
-  glutReshapeFunc(myReshape);				// function to run when the window gets resized
-  glutIdleFunc(myFrameMove);				// function to run when not handling any other task
-  glutMainLoop();							// infinite loop that will keep drawing and resizing and whatever else
+  // function to run when its time to draw something
+  glutDisplayFunc(myDisplay);
+  // function to run when the window gets resized
+  glutReshapeFunc(myReshape);
+  // function to run when not handling any other task
+  glutIdleFunc(myFrameMove);
+  // infinite loop that will keep drawing and resizing and whatever else
+  glutMainLoop();
 
   return 0;
 }
