@@ -10,7 +10,7 @@ HEADERS = $(wildcard *.hpp *.h)
 FRAMEWORK = -framework GLUT
 FRAMEWORK += -framework OpenGL
 MACLIBS = -lGL -lGLU -lm -lstdc++ 
-MACINCS = -L"/System/Library/Frameworks/OpenGL.framework/Libraries"
+MACINCS = -L"/System/Library/Frameworks/OpenGL.framework/Libraries" -I./include/
 
 #-----------------------------------------
 CCFLAGS = $(OPTMAC) $(MACINCS) -DOSX

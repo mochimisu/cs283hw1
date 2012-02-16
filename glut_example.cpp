@@ -18,6 +18,8 @@
 #include <GL/glu.h>
 #endif
 
+#include <algebra3.h>
+
 #include <time.h>
 #include <math.h>
 
