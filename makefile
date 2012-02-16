@@ -21,6 +21,7 @@ all: $(PRODUCT)
 $(PRODUCT): $(patsubst %.cpp,%.o,$(wildcard *.cpp))
 	$(C++) $(LDFLAGS) $^ -o $(PRODUCT)
 
+
 %.o: %.cpp $(HEADERS)
 	$(C++) $(CCFLAGS) -c $< -o $@
 

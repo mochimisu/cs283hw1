@@ -19,6 +19,7 @@
 #endif
 
 #include <algebra3.h>
+#include "vertex.h"
 
 #include <time.h>
 #include <math.h>
