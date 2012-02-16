@@ -20,6 +20,7 @@
 
 #include <algebra3.h>
 #include "vertex.h"
+#include "triangle.h"
 
 #include <time.h>
 #include <math.h>
@@ -108,12 +109,31 @@ void myDisplay() {
   // Triangle Code
   glColor3f(1.0f,0.5f,0.0f);					// setting the color to orange for the triangle
 
-  float basey = -sqrt(0.48f);					// height of triangle = sqrt(.8^2-.4^2)
+float basey = -sqrt(0.48f);					// height of triangle = sqrt(.8^2-.4^2)
+
+  Vertex* a = new Vertex();
+  Vertex* b = new Vertex();
+  Vertex* c = new Vertex();
+  a->pos = vec3(0.5f,  0.0f, 0.0f);
+  b->pos = vec3(0.1f, basey, 0.0f);
+  c->pos = vec3(0.9f, basey, 0.0f);
+
+  Triangle* d = new Triangle(a, b, c);
+
+  glBegin(GL_POLYGON);
+  glVertex3f(d->vtx1->pos[0],d->vtx1->pos[1],d->vtx1->pos[2]);
+  glVertex3f(d->vtx2->pos[0],d->vtx2->pos[1],d->vtx2->pos[2]);
+  glVertex3f(d->vtx3->pos[0],d->vtx3->pos[1],d->vtx3->pos[2]);
+  glEnd();
+
+
+  /*
   glBegin(GL_POLYGON);
   glVertex3f(0.5f,  0.0f, 0.0f);			// top tip of triangle
   glVertex3f(0.1f, basey, 0.0f);			// lower left corner of triangle
   glVertex3f(0.9f, basey, 0.0f);			// lower right corner of triangle
   glEnd();
+  */
   //-----------------------------------------------------------------------
 
   glFlush();
