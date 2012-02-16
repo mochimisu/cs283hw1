@@ -1,56 +1,29 @@
-#!gmake 
+C++ = g++
+
+OPTMAC = -fast
+
+PRODUCT=glut_example
+
+HEADERS = $(wildcard *.hpp *.h)
+
+# Mac specific stuff
+FRAMEWORK = -framework GLUT
+FRAMEWORK += -framework OpenGL
+MACLIBS = -lGL -lGLU -lm -lstdc++ 
+MACINCS = -L"/System/Library/Frameworks/OpenGL.framework/Libraries"
 
 #-----------------------------------------
-#Basic Stuff -----------------------------
-CC          = g++ 
-cc          = gcc
+CCFLAGS = $(OPTMAC) $(MACINCS) -DOSX
+LDFLAGS = $(OPTMAC) $(MACINCS) $(MACLIBS) -DOSX $(FRAMEWORK)
 
-#-----------------------------------------
-#Optimization ----------------------------
-OPT   = -O3
+all: $(PRODUCT)
 
-#-----------------------------------------
-# X       --------------------------------
-X_INC  =   -I/usr/X11R6/include -I/sw/include -I/usr/sww/include -I/usr/sww/pkg/Mesa/include
-X_LIB  =   -L/usr/X11R6/lib -L/sw/lib -L/usr/sww/lib -L/usr/sww/bin -L/usr/sww/pkg/Mesa/lib
+$(PRODUCT): $(patsubst %.cpp,%.o,$(wildcard *.cpp))
+	$(C++) $(LDFLAGS) $^ -o $(PRODUCT)
 
-#-----------------------------------------
-
-#-----------------------------------------
-# GL      --------------------------------
-GL_LIB  =   -lglut -lGLU -lGL -lX11
-
-#-----------------------------------------
-
-TARGETS = glut_example
-
-OBJECTS = glut_example.o
-
-#-----------------------------------------
-
-LIBS = $(X_LIB) $(GL_LIB)
-INCS = $(X_INC)
-
-CCOPTS = $(OPT) $(INCS)
-LDOPTS = $(OPT) $(INCS) $(LIBS)
-
-#-----------------------------------------
-#-----------------------------------------
-
-default: $(TARGETS)
+%.o: %.cpp $(HEADERS)
+	$(C++) $(CCFLAGS) -c $< -o $@
 
 clean:
-	/bin/rm -f *.o $(TARGETS)
-
-#-----------------------------------------
-#-----------------------------------------
-
-glut_example: glut_example.o
-	$(CC) glut_example.o $(LDOPTS) -o glut_example 
-
-glut_example.o: glut_example.cpp
-	$(CC) glut_example.cpp -c $(CCOPTS)
-
-
-#export LD_LIBRARY_PATH="/usr/sww/pkg/Mesa/lib:/usr/lib:/usr/sww/lib"
-
+	rm -rf *.o
+	rm -rf $(PRODUCT)
