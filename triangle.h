@@ -1,3 +1,13 @@
+/*
+ * triangle.h
+ *
+ * Triangles for CS283 HW1
+ *
+ * Created on: February 15, 2012
+ *     Author: yglee
+ */
+
+
 #ifndef TRIANGLE_H_
 #define TRIANGLE_H_
 
