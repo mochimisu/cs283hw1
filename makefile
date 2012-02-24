@@ -1,30 +1,57 @@
-C++ = g++
+#Code   -------------------------------
 
-OPTMAC = -fast
+### YOU CAN CHANGE THESE VARIABLES AS YOU ADD CODE:
+TARGET := hw1
+SOURCES := $(wildcard ./*.cpp)
 
-PRODUCT=glut_example
+#Libraries -------------------------------
 
-HEADERS = $(wildcard *.hpp *.h)
+#Check for OSX. Works on 10.5 (and 10.4 but untested)
+#This line still kicks out an annoying error on Solaris.
+ifeq ($(shell sw_vers 2>/dev/null | grep Mac | awk '{ print $$2}'),Mac)
+	#Assume Mac
+	INCLUDE := -I./include/ -I/usr/X11/include
+	LIBRARY := \
+    	-L"/System/Library/Frameworks/OpenGL.framework/Libraries" \
+    	-lGL -lGLU -lm -lstdc++
+	FRAMEWORK := -framework GLUT -framework OpenGL
+	MACROS := -DOSX
+	PLATFORM := Mac
+else
+	#Assume X11
+	INCLUDE := -I./include/ -I/usr/X11R6/include -I/sw/include \
+		-I/usr/sww/include -I/usr/sww/pkg/Mesa/include
+	LIBRARY := -L./lib/ -L/usr/X11R6/lib -L/sw/lib -L/usr/sww/lib \
+		-L/usr/sww/bin -L/usr/sww/pkg/Mesa/lib -lglut -lGLU -lGL -lX11
+	FRAMEWORK := 
+	MACROS := 
+	PLATFORM := *Nix
+endif
 
-# Mac specific stuff
-FRAMEWORK = -framework GLUT
-FRAMEWORK += -framework OpenGL
-MACLIBS = -lGL -lGLU -lm -lstdc++ 
-MACINCS = -L"/System/Library/Frameworks/OpenGL.framework/Libraries" -I./include/
+#Basic Stuff -----------------------------
 
+CC := gcc
+CXX := g++
+CXXFLAGS := -g -Wall -O3 -fmessage-length=0 $(INCLUDE) $(MACROS)
+LDFLAGS := $(FRAMEWORK) $(LIBRARY)
 #-----------------------------------------
-CCFLAGS = $(OPTMAC) $(MACINCS) -DOSX
-LDFLAGS = $(OPTMAC) $(MACINCS) $(MACLIBS) -DOSX $(FRAMEWORK)
+%.o : %.cpp
+	@echo "Compiling .cpp to .o for $(PLATFORM) Platform:  $<" 
+	@$(CXX) -c -Wall $(CXXFLAGS) $< -o $@
 
-all: $(PRODUCT)
+OBJECTS = $(SOURCES:.cpp=.o)
 
-$(PRODUCT): $(patsubst %.cpp,%.o,$(wildcard *.cpp))
-	$(C++) $(LDFLAGS) $^ -o $(PRODUCT)
-
-
-%.o: %.cpp $(HEADERS)
-	$(C++) $(CCFLAGS) -c $< -o $@
+$(TARGET): $(OBJECTS)
+	@echo "Linking .o files into:  $(TARGET)"
+	@$(CXX) $(LDFLAGS) $(OBJECTS) -o $(TARGET)
+	
+default: $(TARGET) 
+	
+all: default
 
 clean:
-	rm -rf *.o
-	rm -rf $(PRODUCT)
+	@echo "Removing compiled files:  $<" 
+	/bin/rm -f $(OBJECTS) $(TARGET)
+
+
+
