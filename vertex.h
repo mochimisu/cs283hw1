@@ -23,6 +23,7 @@ class Vertex
     vec3 rest;
     vec3 force;
     vec3 accel;
+	vec3 vel;
 };
 
 #endif 

@@ -6,10 +6,8 @@ class Triangle {
 
 public:
   Triangle(Vertex *v1, Vertex *v2, Vertex *v3);
-  
-  Vertex *vtx1;
-  Vertex *vtx2;
-  Vertex *vtx3;  
+
+  vector<Vertex *> vertices;
 
 private:
 };
