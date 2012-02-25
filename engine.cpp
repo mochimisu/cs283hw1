@@ -40,7 +40,8 @@ void Engine::nodeForce(Triangle* t, float lame, float mu)
 
   mat3 materialToWorld = baryToWorld * materialToBary;
 
-  mat3 strain = 0.5* (materialToWorld.transpose()* materialToWorld - identity2D());
+  mat3 strain = 0.5* (materialToWorld.transpose()
+      *materialToWorld - identity2D());
 
   /*
       cout<<"materialToWorld"<<endl<<endl;
