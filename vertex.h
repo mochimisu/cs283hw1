@@ -17,7 +17,10 @@ class Vertex
   public:
     Vertex() {};
     Vertex(vec3 pos, vec3 mPos, vec3 rest) : wPos(pos), mPos(mPos), rest(rest),
-      force(force), accel(accel) {};
+      force(force), accel(accel) {
+	  vel = vec3(0.0);
+	  pinned = false;
+	  };
 
     vec3 wPos;
 	vec2 mPos;
@@ -27,6 +30,7 @@ class Vertex
 	vec3 vel;
 
 	float mass;
+	bool pinned;
 };
 
 #endif 

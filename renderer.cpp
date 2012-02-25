@@ -19,10 +19,20 @@ void setActiveRenderer(Renderer * newRenderer)
 
 void display()
 {
+  activeRenderer->stepEngine();
+
   glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
 
+  //Wireframe
+  glColor3f(1,1,1);
+  glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+  activeRenderer->draw();
+
+  //Normal
+  glColor3f(0.7,0.0,0.3);
+  glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
   activeRenderer->draw();
 
   glutSwapBuffers();
@@ -87,6 +97,7 @@ void Renderer::init(int argc,char** argv)
   glutMotionFunc(activeMotion);
   glutPassiveMotionFunc(passiveMotion);
   glutSpecialFunc(specialKeyboard);
+  glutIdleFunc(display);
 
     // set some lights
   {
@@ -101,13 +112,14 @@ void Renderer::init(int argc,char** argv)
   }
   glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
   glEnable(GL_COLOR_MATERIAL);
-  glEnable(GL_LIGHTING);
+  //glEnable(GL_LIGHTING);
   glEnable(GL_DEPTH_TEST);
 
   
   //enable face culling for removal
   //glEnable(GL_CULL_FACE);
   glHint(GL_PERSPECTIVE_CORRECTION_HINT,GL_NICEST);
+  
 
 
   //Generate the mesh
@@ -125,12 +137,19 @@ void Renderer::mainLoop()
   glutMainLoop();
 }
 
+void Renderer::stepEngine()
+{
+	engine.step(0.001);
+}
+
+
 void Renderer::draw()
 {
   //bind buffers later instead of calling glVertex w/e
   glBegin(GL_TRIANGLES);
   for(vector<Triangle *>::iterator it = triangles.begin(); 
       it != triangles.end(); ++it) {
+	  
     Triangle * curTriangle = *it;
     for(vector<Vertex *>::iterator vt = curTriangle->vertices.begin();
         vt != curTriangle->vertices.end(); ++vt) {

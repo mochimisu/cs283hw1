@@ -12,6 +12,13 @@ Engine::~Engine()
 {
 }
 
+void Engine::step(float stepSize)
+{
+	//TODO: move lame and mu constants somewhere else
+	updateForces(20.0, 20.0);
+	updatePos(stepSize);
+}
+
 void Engine::nodeForce(Triangle* t, float lame, float mu)
 {
 	//Green Strain
@@ -22,6 +29,10 @@ void Engine::nodeForce(Triangle* t, float lame, float mu)
 	Vertex *v2 = t->vertices[1];
 	Vertex *v3 = t->vertices[2];
 	
+	cout << v1->mPos << endl;
+	cout << v2->mPos << endl;
+	cout << v3->mPos << endl;
+
 	mat3 materialToBary = mat3(
 					vec3(v1->mPos[0], v2->mPos[0], v3->mPos[0]),
 					vec3(v1->mPos[1], v2->mPos[1], v3->mPos[1]),
@@ -81,6 +92,8 @@ void Engine::nodeForce(Triangle* t, float lame, float mu)
 		}
 		vec3 curForce = -0.5 * vol * pointSum;
 		t->vertices[i]->force = curForce;
+		//gravity
+		t->vertices[i]->force += vec3(0,-9.8,0);
 	}
 }
 
@@ -88,15 +101,18 @@ void Engine::updatePos(float timeStep)
 {
 	vector<Vertex*>::iterator vertexIter;
 	for (vertexIter = vertices->begin(); vertexIter != vertices->end(); ++vertexIter) {
+		
 		Vertex * curVertex = *vertexIter;
 		vec3 curForce = curVertex->force;
 		vec3 curAccel = curForce/curVertex->mass;
 		vec3 curVelocity = curVertex->vel + curAccel * timeStep;
 		vec3 curPos = curVertex->wPos + curVelocity * timeStep;
-
-		curVertex->accel = curAccel;
-		curVertex->vel = curVelocity;
-		curVertex->wPos = curPos;
+		if (!curVertex->pinned) {
+				curVertex->accel = curAccel;
+				curVertex->vel = curVelocity;
+				curVertex->wPos = curPos;
+		}
+		cout << "New position: " << curVertex->wPos[0] << "," << curVertex->wPos[1] << "," <<curVertex->wPos[2] << endl;
 	}
 }
 

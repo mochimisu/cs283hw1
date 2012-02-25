@@ -11,10 +11,11 @@ public:
 	~Renderer();
 
   void init(int argc, char** argv);
-	void draw();
+  void draw();
+  void stepEngine();
   void mainLoop();
 
-	std::vector<Triangle *> triangles;
+  std::vector<Triangle *> triangles;
   std::vector<Vertex *> vertices;
 
   Engine engine;
