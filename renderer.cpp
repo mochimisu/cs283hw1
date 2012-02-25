@@ -124,7 +124,7 @@ void Renderer::init(int argc,char** argv)
 
 
   //Generate the mesh
-  generateMesh(triangles, vertices, 0.5, 0.5, 0.05);
+  generateMesh(triangles, vertices, 0.5, 0.5, 0.01);
 
   //Set up the engine
   engine = Engine();
