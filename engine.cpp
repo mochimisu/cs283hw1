@@ -75,6 +75,30 @@ void Engine::nodeForce(Triangle* t, float lame, float mu)
     }
   }
 
+  //Green Rate
+  mat3 baryToVelocityWorld = mat3(
+      vec3(v1->vel[0], v2->vel[0], v3->vel[0]),
+      vec3(v1->vel[1], v2->vel[1], v3->vel[1]),
+      vec3(v1->vel[2], v2->vel[2], v3->vel[2]));
+
+  mat3 materialToVelocityWorld = baryToVelocityWorld * materialToBary;
+
+  mat3 rate = (materialToWorld.transpose() * materialToVelocityWorld
+      + materialToVelocityWorld.transpose() * materialToWorld);
+
+  //Green Rate Stress
+  mat3 rateStress = mat3(0);
+  for (int i=0; i<3; i++) {
+    for (int j=0; j<3; j++) {
+      //change these to other consts later
+      float sum = 0.0;
+      for (int k=0; k<3; k++) {
+        sum += strain[k][k];
+      }
+      rateStress[i][j] = lame*sum*delta(i,j) + 2*mu*strain[i][j];
+    }
+  }
+
   //Kinetic Forces
   float vol = 0.5 * ((v1->mPos - v2->mPos) ^ (v3->mPos - v2->mPos)).length();
 
@@ -85,7 +109,7 @@ void Engine::nodeForce(Triangle* t, float lame, float mu)
       float stressSum = 0.0;
       for(int k=0; k<3; k++) {
         for (int l=0; l<3; l++) {
-          stressSum += materialToBary[j][l]*materialToBary[i][k]*stress[k][l];
+          stressSum += materialToBary[j][l]*materialToBary[i][k]*(stress[k][l]+rateStress[k][l]);
         }
       }
       pointSum += t->vertices[j]->wPos * stressSum;
