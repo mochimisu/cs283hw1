@@ -90,7 +90,7 @@ void Engine::nodeForce(Triangle* t, float lame, float mu)
       }
       pointSum += t->vertices[j]->wPos * stressSum;
     }
-    vec3 curForce = -vol * pointSum;
+    vec3 curForce = -0.5 * vol * pointSum;
     t->vertices[i]->force += curForce;
   }
 }
