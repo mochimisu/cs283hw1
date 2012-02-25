@@ -26,6 +26,8 @@ void Engine::nodeForce(Triangle* t, float lame, float mu)
   Vertex *v1 = t->vertices[0];
   Vertex *v2 = t->vertices[1];
   Vertex *v3 = t->vertices[2];
+
+  //Beta
   mat3 materialToBary = mat3(
       vec3(v1->mPos[0], v2->mPos[0], v3->mPos[0]),
       vec3(v1->mPos[1], v2->mPos[1], v3->mPos[1]),
@@ -38,14 +40,15 @@ void Engine::nodeForce(Triangle* t, float lame, float mu)
 
   mat3 materialToWorld = baryToWorld * materialToBary;
 
-  mat3 strain = (materialToWorld.transpose()* materialToWorld) - identity2D();
+  mat3 strain = 0.5* (materialToWorld.transpose()* materialToWorld - identity2D());
+
   /*
       cout<<"materialToWorld"<<endl<<endl;
       cout<<materialToWorld<<endl<<endl;
       cout<<"materialToWorld Transpose"<<endl<<endl;
       cout<<materialToWorld.transpose()<<endl<<endl;*/
-  cout<<"strain matrix"<<endl<<endl;
-  cout << strain << endl << endl;
+  //cout<<"strain matrix"<<endl<<endl;
+  //cout << strain << endl << endl;
 
 
   //Stress
@@ -73,7 +76,7 @@ void Engine::nodeForce(Triangle* t, float lame, float mu)
   }
 
   //Kinetic Forces
-  float vol = 0.5 * ((v1->wPos - v2->wPos) ^ (v3->wPos - v2->wPos)).length();
+  float vol = 0.5 * ((v1->mPos - v2->mPos) ^ (v3->mPos - v2->mPos)).length();
 
 
   for(int i=0; i<3; i++) {

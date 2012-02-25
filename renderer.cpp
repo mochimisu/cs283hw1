@@ -98,7 +98,7 @@ void Renderer::init(int argc,char** argv)
   glutMotionFunc(activeMotion);
   glutPassiveMotionFunc(passiveMotion);
   glutSpecialFunc(specialKeyboard);
-  //glutIdleFunc(display);
+  glutIdleFunc(display);
 
     // set some lights
   {
@@ -124,7 +124,7 @@ void Renderer::init(int argc,char** argv)
 
 
   //Generate the mesh
-  generateMesh(triangles, vertices, 0.5, 0.5, 0.1);
+  generateMesh(triangles, vertices, 0.5, 0.5, 0.05);
 
   //Set up the engine
   engine = Engine();
@@ -140,7 +140,7 @@ void Renderer::mainLoop()
 
 void Renderer::stepEngine()
 {
-	engine.step(0.001);
+	engine.step(0.0001);
 }
 
 
