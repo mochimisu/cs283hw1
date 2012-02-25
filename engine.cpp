@@ -10,7 +10,6 @@ Engine::Engine()
 
 Engine::~Engine()
 {
-	vertices.clear();
 }
 
 void Engine::nodeForce(Triangle* t, float lame, float mu)
@@ -88,7 +87,7 @@ void Engine::nodeForce(Triangle* t, float lame, float mu)
 void Engine::updatePos(float timeStep) 
 {
 	vector<Vertex*>::iterator vertexIter;
-	for (vertexIter = vertices.begin(); vertexIter != vertices.end(); ++vertexIter) {
+	for (vertexIter = vertices->begin(); vertexIter != vertices->end(); ++vertexIter) {
 		Vertex * curVertex = *vertexIter;
 		vec3 curForce = curVertex->force;
 		vec3 curAccel = curForce/curVertex->mass;
@@ -99,4 +98,12 @@ void Engine::updatePos(float timeStep)
 		curVertex->vel = curVelocity;
 		curVertex->wPos = curPos;
 	}
+}
+
+void Engine::updateForces(float lame, float mu)
+{
+  vector<Triangle*>::iterator triangleIter;
+  for (triangleIter = triangles->begin(); triangleIter != triangles->end(); ++triangleIter) {
+    nodeForce(*triangleIter, lame, mu);
+  }
 }

@@ -1,5 +1,3 @@
-
-
 #ifdef OSX
 #include <GLUT/glut.h>
 #include <OpenGL/glu.h>
@@ -10,6 +8,7 @@
 
 
 #include "renderer.h"
+#include "squareMesh.h"
 
 Renderer * activeRenderer;
 
@@ -58,7 +57,7 @@ void activeMotion(int x, int y)
 }
 
 void passiveMotion(int x, int y)
-{
+{ 
 }
 
 
@@ -110,8 +109,15 @@ void Renderer::init(int argc,char** argv)
   //glEnable(GL_CULL_FACE);
   glHint(GL_PERSPECTIVE_CORRECTION_HINT,GL_NICEST);
 
+
+  //Generate the mesh
+  generateMesh(triangles, vertices, 0.5, 0.5, 0.1);
+
   //Set up the engine
   engine = Engine();
+  engine.vertices = &vertices;
+  engine.triangles = &triangles;
+
 }
 
 void Renderer::mainLoop() 
@@ -134,18 +140,4 @@ void Renderer::draw()
   }
   glEnd();
 
-
-  
-  //----------------------- code to draw objects --------------------------
-  // Rectangle Code
-  //glColor3f(red component, green component, blue component);
-  glColor3f(1.0f,0.0f,0.0f);					// setting the color to pure red 90% for the rect
-
-  glBegin(GL_POLYGON);						// draw rectangle 
-  //glVertex3f(x val, y val, z val (won't change the point because of the projection type));
-  glVertex3f(-0.8f, 0.0f, 0.0f);			// bottom left corner of rectangle
-  glVertex3f(-0.8f, 0.5f, 0.0f);			// top left corner of rectangle
-  glVertex3f( 0.0f, 0.5f, 0.0f);			// top right corner of rectangle
-  glVertex3f( 0.0f, 0.0f, 0.0f);			// bottom right corner of rectangle
-  glEnd();
-}
+ }

@@ -14,9 +14,10 @@ public:
 	void step(float stepSize);
 	void nodeForce(Triangle* t, float lame, float mu);
 	void updatePos(float stepSize);
+  void updateForces(float lame, float mu);
 
-	std::vector<Vertex *> vertices; 
-	std::vector<Triangle *> triangles;
+	std::vector<Vertex *> *vertices; 
+	std::vector<Triangle *> *triangles;
 
 private:
 };

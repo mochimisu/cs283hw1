@@ -15,6 +15,8 @@ public:
   void mainLoop();
 
 	std::vector<Triangle *> triangles;
+  std::vector<Vertex *> vertices;
+
   Engine engine;
 
   int width, height;
