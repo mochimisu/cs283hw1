@@ -15,7 +15,7 @@ Engine::~Engine()
 void Engine::step(float stepSize)
 {
   //TODO: move lame and mu constants somewhere else
-  updateForces(1.0, 10);
+  updateForces(1, 10);
   updatePos(stepSize);
 }
 
@@ -84,7 +84,7 @@ void Engine::nodeForce(Triangle* t, float lame, float mu)
 
   mat3 materialToVelocityWorld = baryToVelocityWorld * materialToBary;
 
-  mat3 rate = (materialToWorld.transpose() * materialToVelocityWorld
+  mat3 rate = 0.5*(materialToWorld.transpose() * materialToVelocityWorld
       + materialToVelocityWorld.transpose() * materialToWorld);
 
   //Green Rate Stress
