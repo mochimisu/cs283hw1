@@ -30,7 +30,7 @@
 
 #define PI 3.14159265
 
-#include "squareMesh.h"
+//#include "squareMesh.h"
 
 //****************************************************
 // Global Variables
@@ -132,7 +132,7 @@ void myFrameMove() {
 //****************************************************
 // the usual stuff, nothing exciting here
 //****************************************************
-int main(int argc, char *argv[]) {
+int mainold(int argc, char *argv[]) {
   //This initializes glut
   glutInit(&argc, argv);
 
@@ -162,11 +162,4 @@ int main(int argc, char *argv[]) {
 
   return 0;
 }
-
-
-
-
-
-
-
 
