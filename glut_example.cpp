@@ -28,11 +28,9 @@
 #include <time.h>
 #include <math.h>
 
-static struct timeval lastTime;
-
 #define PI 3.14159265
 
-
+#include "squareMesh.h"
 
 //****************************************************
 // Global Variables
@@ -100,33 +98,19 @@ void myDisplay() {
   // Triangle Code
   glColor3f(1.0f,0.5f,0.0f);					// setting the color to orange for the triangle
 
-float basey = -sqrt(0.48f);					// height of triangle = sqrt(.8^2-.4^2)
+#if 0
+	vector<Triangle*> triangles;
+	vector<Vertex*> vertices;
 
-  Vertex* a = new Vertex();
-  Vertex* b = new Vertex();
-  Vertex* c = new Vertex();
-  a->pos = vec3(0.5f,  0.0f, 0.0f);
-  b->pos = vec3(0.1f, basey, 0.0f);
-  c->pos = vec3(0.9f, basey, 0.0f);
+	generateMesh(triangles, vertices, 100.0, 100.0, 1.0);
 
-  Triangle* d = new Triangle(a, b, c);
+	vector<Triangle*>::iterator t;
 
-  glBegin(GL_POLYGON);
-  glVertex3f(d->vtx1->pos[0],d->vtx1->pos[1],d->vtx1->pos[2]);
-  glVertex3f(d->vtx2->pos[0],d->vtx2->pos[1],d->vtx2->pos[2]);
-  glVertex3f(d->vtx3->pos[0],d->vtx3->pos[1],d->vtx3->pos[2]);
-  glEnd();
+	for(t = triangles.begin(); t != triangles.end(); ++t) {
+		glVertex3f();
+	}
 
-
-  /*
-  glBegin(GL_POLYGON);
-  glVertex3f(0.5f,  0.0f, 0.0f);			// top tip of triangle
-  glVertex3f(0.1f, basey, 0.0f);			// lower left corner of triangle
-  glVertex3f(0.9f, basey, 0.0f);			// lower right corner of triangle
-  glEnd();
-  */
-  //-----------------------------------------------------------------------
-
+#endif
   glFlush();
   glutSwapBuffers();
 }

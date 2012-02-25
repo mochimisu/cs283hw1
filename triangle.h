@@ -12,6 +12,7 @@
 #define TRIANGLE_H_
 
 #include "vertex.h"
+#include <vector>
 class Triangle {
 
 public:

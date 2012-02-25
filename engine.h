@@ -2,6 +2,8 @@
 #define ENGINE_H
 
 #include "vertex.h"
+#include "triangle.h"
+#include <vector>
 
 class Engine {
 
@@ -10,7 +12,7 @@ public:
 	~Engine();
 	
 	void step(float stepSize);
-	mat4 nodeForce(Triangle* t, float lame, float mu);
+	void nodeForce(Triangle* t, float lame, float mu);
 	void updatePos(float stepSize);
 
 	std::vector<Vertex *> vertices; 

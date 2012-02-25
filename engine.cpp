@@ -23,15 +23,15 @@ void Engine::nodeForce(Triangle* t, float lame, float mu)
 	Vertex *v2 = t->vertices[1];
 	Vertex *v3 = t->vertices[2];
 	
-	materialToBary = mat3(
-	vec3(v1->mPos[0], v2->mPos[0], v3->mPos[0]),
-	vec3(v1->mPos[1], v2->mPos[1], v3->mPos[1]),
-	vec3(1, 1, 1 )).inverse();
+	mat3 materialToBary = mat3(
+					vec3(v1->mPos[0], v2->mPos[0], v3->mPos[0]),
+					vec3(v1->mPos[1], v2->mPos[1], v3->mPos[1]),
+					vec3(1, 1, 1 )).inverse();
 
-	materialToWorld = mat3(
-	vec3(v1->wPos[0], v2->wPos[0], v3->wPos[0]),
-	vec3(v1->wPos[1], v2->wPos[1], v3->wPos[1]),
-	vec3(v1->wPos[2], v2->wPos[2], v3->wPos[2]))
+	mat3 materialToWorld = mat3(
+					vec3(v1->wPos[0], v2->wPos[0], v3->wPos[0]),
+					vec3(v1->wPos[1], v2->wPos[1], v3->wPos[1]),
+					vec3(v1->wPos[2], v2->wPos[2], v3->wPos[2]))
 	* materialToBary;
 
 	for (int i = 0; i < 3; i++) {
@@ -48,7 +48,7 @@ void Engine::nodeForce(Triangle* t, float lame, float mu)
 
 
 	//Stress
-	mat4 stress = mat3(
+	mat3 stress = mat3(
 				  vec3(0.0),
 				  vec3(0.0),
 				  vec3(0.0));
@@ -66,12 +66,10 @@ void Engine::nodeForce(Triangle* t, float lame, float mu)
 	}
 
 	//Kinetic Forces
-	mat3 forces = mat3(0.0);
-	float vol = 0.5 * abs((v1->wPos - v2->wPos) ^ (v3->wPos - v2->wPos));
+	float vol = 0.5 * ((v1->wPos - v2->wPos) ^ (v3->wPos - v2->wPos)).length();
 	
 	
 	for(int i=0; i<3; i++) {
-		forces[i] = -vol*0.5;
 		vec3 pointSum = vec3(0.0);
 		for(int j=0; j<3; j++) {
 			float stressSum = 0.0;
@@ -82,16 +80,16 @@ void Engine::nodeForce(Triangle* t, float lame, float mu)
 			}
 			pointSum += t->vertices[j]->wPos * stressSum;
 		}
-		forces[i] *= pointSum;
-		t->vertices[i]->force = forces[i];
+		vec3 curForce = -0.5 * vol * pointSum;
+		t->vertices[i]->force = curForce;
 	}
 }
 
 void Engine::updatePos(float timeStep) 
 {
-	vector<Vertex*>::vertices vertexIter;
+	vector<Vertex*>::iterator vertexIter;
 	for (vertexIter = vertices.begin(); vertexIter != vertices.end(); ++vertexIter) {
-		Vertex * curVertex = vertexIter;
+		Vertex * curVertex = *vertexIter;
 		vec3 curForce = curVertex->force;
 		vec3 curAccel = curForce/curVertex->mass;
 		vec3 curVelocity = curVertex->vel + curAccel * timeStep;
@@ -99,6 +97,6 @@ void Engine::updatePos(float timeStep)
 
 		curVertex->accel = curAccel;
 		curVertex->vel = curVelocity;
-		curVertex->curPos = curPos;
+		curVertex->wPos = curPos;
 	}
 }

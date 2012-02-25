@@ -16,7 +16,7 @@ class Vertex
 {
   public:
     Vertex() {};
-    Vertex(vec3 pos, vec3 rest, vec3 force, vec3 accel) : pos(pos), rest(rest),
+    Vertex(vec3 pos, vec3 mPos, vec3 rest) : wPos(pos), mPos(mPos), rest(rest),
       force(force), accel(accel) {};
 
     vec3 wPos;
