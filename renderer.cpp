@@ -12,6 +12,18 @@
 
 Renderer * activeRenderer;
 
+
+void applyMat4(mat4 &mat) {
+  double glmat[16];
+  int k = 0;
+  for (int j = 0; j < 4; j++) {
+    for (int i = 0; i < 4; i++) {
+      glmat[k++] = mat[j][i];
+    }
+  }
+  glMultMatrixd(glmat);
+}
+
 void setActiveRenderer(Renderer * newRenderer)
 {
   activeRenderer = newRenderer;
@@ -25,6 +37,8 @@ void display()
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
 
+
+  applyMat4(activeRenderer->orientation);    
   //Wireframe
   glColor3f(1,1,1);
   glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -65,10 +79,31 @@ void specialKeyboard(int key, int x, int y)
 
 void activeMotion(int x, int y)
 {
+  vec2 newMouse = vec2((double)x / activeRenderer->width,(double)y / 
+      activeRenderer->height);
+  vec2 diff = (newMouse - activeRenderer->mousePos);
+  double len = diff.length();
+  if (len > .001) {
+    vec3 axis = vec3(diff[1]/len, diff[0]/len, 0);
+    activeRenderer->orientation = activeRenderer->orientation * 
+      rotation3D(axis, -180 * len);
+  }
+
+  //Record the mouse location for drawing crosshairs
+  activeRenderer->mousePos = newMouse;
+
+  //Force a redraw of the window.
+  glutPostRedisplay();
 }
 
 void passiveMotion(int x, int y)
 { 
+  //Record the mouse location for drawing crosshairs
+  activeRenderer-> mousePos = vec2((double)x / activeRenderer->width,
+      (double)y / activeRenderer->height);
+
+  //Force a redraw of the window.
+  glutPostRedisplay();
 }
 
 
@@ -76,11 +111,12 @@ Renderer::Renderer()
 {
   width = 600;
   height = 600;
+  orientation = identity3D();
 }
 
 Renderer::~Renderer()
 {
-	triangles.clear();
+  triangles.clear();
 }
 
 void Renderer::init(int argc,char** argv)
@@ -100,7 +136,7 @@ void Renderer::init(int argc,char** argv)
   glutSpecialFunc(specialKeyboard);
   glutIdleFunc(display);
 
-    // set some lights
+  // set some lights
   {
     float ambient[4] = { .1f, .1f, .1f, 1.f };
     float diffuse[4] = { 1.0f, 1.0f, 1.0f, 1.f };
@@ -116,11 +152,11 @@ void Renderer::init(int argc,char** argv)
   //glEnable(GL_LIGHTING);
   glEnable(GL_DEPTH_TEST);
 
-  
+
   //enable face culling for removal
   //glEnable(GL_CULL_FACE);
   glHint(GL_PERSPECTIVE_CORRECTION_HINT,GL_NICEST);
-  
+
 
 
   //Generate the mesh
@@ -140,7 +176,7 @@ void Renderer::mainLoop()
 
 void Renderer::stepEngine()
 {
-	engine.step(0.0001);
+  engine.step(0.0001);
 }
 
 
@@ -150,7 +186,7 @@ void Renderer::draw()
   glBegin(GL_TRIANGLES);
   for(vector<Triangle *>::iterator it = triangles.begin(); 
       it != triangles.end(); ++it) {
-	  
+
     Triangle * curTriangle = *it;
     for(vector<Vertex *>::iterator vt = curTriangle->vertices.begin();
         vt != curTriangle->vertices.end(); ++vt) {
@@ -160,4 +196,4 @@ void Renderer::draw()
   }
   glEnd();
 
- }
+}

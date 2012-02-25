@@ -21,6 +21,8 @@ public:
   Engine engine;
 
   int width, height;
+  vec2 mousePos;
+  mat4 orientation;
 };
 
 void setActiveRenderer(Renderer * newRenderer);
