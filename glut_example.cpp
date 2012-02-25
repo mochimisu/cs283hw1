@@ -84,33 +84,34 @@ void myDisplay() {
   glLoadIdentity();							// make sure transformation is "zero'd"
 
   //----------------------- code to draw objects --------------------------
-  // Rectangle Code
-  //glColor3f(red component, green component, blue component);
-  glColor3f(1.0f,0.0f,0.0f);					// setting the color to pure red 90% for the rect
 
-  glBegin(GL_POLYGON);						// draw rectangle 
-  //glVertex3f(x val, y val, z val (won't change the point because of the projection type));
-  glVertex3f(-0.8f, 0.0f, 0.0f);			// bottom left corner of rectangle
-  glVertex3f(-0.8f, 0.5f, 0.0f);			// top left corner of rectangle
-  glVertex3f( 0.0f, 0.5f, 0.0f);			// top right corner of rectangle
-  glVertex3f( 0.0f, 0.0f, 0.0f);			// bottom right corner of rectangle
-  glEnd();
-  // Triangle Code
-  glColor3f(1.0f,0.5f,0.0f);					// setting the color to orange for the triangle
+	glColor3f(1.0f, 0.5f, 0.0f);
 
-#if 0
 	vector<Triangle*> triangles;
 	vector<Vertex*> vertices;
-
-	generateMesh(triangles, vertices, 100.0, 100.0, 1.0);
+	generateMesh(triangles, vertices, 0.5, 0.5, 0.1);
 
 	vector<Triangle*>::iterator t;
 
 	for(t = triangles.begin(); t != triangles.end(); ++t) {
-		glVertex3f();
+		Triangle *tri = *t; 
+		vector<Vertex*> triVertices = tri->vertices;
+		
+		Vertex* v1 = triVertices[0];
+		Vertex* v2 = triVertices[1];
+		Vertex* v3 = triVertices[2];
+
+		vec3 pos1 = v1->wPos;
+		vec3 pos2 = v2->wPos;
+		vec3 pos3 = v3->wPos;
+
+		glBegin(GL_POLYGON);
+		glVertex3f((float) pos1[0], (float) pos1[1], (float) pos1[2]);
+		glVertex3f((float) pos2[0], (float) pos2[1], (float) pos2[2]);
+		glVertex3f((float) pos3[0], (float) pos3[1], (float) pos3[2]);
+		glEnd();
 	}
 
-#endif
   glFlush();
   glutSwapBuffers();
 }
