@@ -13,7 +13,7 @@ Engine::~Engine()
 	vertices.clear();
 }
 
-mat4 Engine::nodeForce(Triangle* t, float lame, float mu)
+void Engine::nodeForce(Triangle* t, float lame, float mu)
 {
 	//Green Strain
 	float epsilon = 0.1;
@@ -36,9 +36,9 @@ mat4 Engine::nodeForce(Triangle* t, float lame, float mu)
 
 	for (int i = 0; i < 3; i++) {
 		for (int j =0; j< 3; j++) {
-			vec3 xu = materialToWorld * vec3(t->vertices[i]->mPos[j][0], t->vertices[i]->mPos[j][1] , 1);
-			vec3 xuEpsilonI = materialToWorld * vec3(t->vertices[i]->mPos[j][0]+epsilon, t->vertices[i]->mPos[j][1] , 1);
-			vec3 xuEpsilonJ = materialToWorld * vec3(t->vertices[i]->mPos[j][0], t->vertices[i]->mPos[j][1]+epsilon , 1);
+			vec3 xu = materialToWorld * vec3(t->vertices[i]->mPos[0], t->vertices[i]->mPos[1] , 1);
+			vec3 xuEpsilonI = materialToWorld * vec3(t->vertices[i]->mPos[0]+epsilon, t->vertices[i]->mPos[1] , 1);
+			vec3 xuEpsilonJ = materialToWorld * vec3(t->vertices[i]->mPos[0], t->vertices[i]->mPos[1]+epsilon , 1);
 			vec3 xui = (xuEpsilonI - xu) / epsilon;
 			vec3 xuj = (xuEpsilonJ - xu) / epsilon;
 
@@ -71,16 +71,34 @@ mat4 Engine::nodeForce(Triangle* t, float lame, float mu)
 	
 	
 	for(int i=0; i<3; i++) {
+		forces[i] = -vol*0.5;
+		vec3 pointSum = vec3(0.0);
 		for(int j=0; j<3; j++) {
-			forces[i][j] = -0.5 * vol;	
+			float stressSum = 0.0;
 			for(int k=0; k<3; k++) {
-				
+				for (int l=0; l<3; l++) {
+					stressSum += materialToBary[j][l]*materialToBary[i][k]*stress[k][l];
+				}
 			}
+			pointSum += t->vertices[j]->wPos * stressSum;
 		}
+		forces[i] *= pointSum;
+		t->vertices[i]->force = forces[i];
 	}
-
 }
 
+void Engine::updatePos(float timeStep) 
+{
+	vector<Vertex*>::vertices vertexIter;
+	for (vertexIter = vertices.begin(); vertexIter != vertices.end(); ++vertexIter) {
+		Vertex * curVertex = vertexIter;
+		vec3 curForce = curVertex->force;
+		vec3 curAccel = curForce/curVertex->mass;
+		vec3 curVelocity = curVertex->vel + curAccel * timeStep;
+		vec3 curPos = curVertex->wPos + curVelocity * timeStep;
 
-
-
+		curVertex->accel = curAccel;
+		curVertex->vel = curVelocity;
+		curVertex->curPos = curPos;
+	}
+}

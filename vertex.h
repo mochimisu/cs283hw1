@@ -19,11 +19,14 @@ class Vertex
     Vertex(vec3 pos, vec3 rest, vec3 force, vec3 accel) : pos(pos), rest(rest),
       force(force), accel(accel) {};
 
-    vec3 pos;
+    vec3 wPos;
+	vec2 mPos;
     vec3 rest;
     vec3 force;
     vec3 accel;
 	vec3 vel;
+
+	float mass;
 };
 
 #endif 

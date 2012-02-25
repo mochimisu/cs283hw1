@@ -11,7 +11,7 @@ public:
 	
 	void step(float stepSize);
 	mat4 nodeForce(Triangle* t, float lame, float mu);
-	void updatePos();
+	void updatePos(float stepSize);
 
 	std::vector<Vertex *> vertices; 
 	std::vector<Triangle *> triangles;
