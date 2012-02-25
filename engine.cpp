@@ -109,7 +109,8 @@ void Engine::nodeForce(Triangle* t, float lame, float mu)
       float stressSum = 0.0;
       for(int k=0; k<3; k++) {
         for (int l=0; l<3; l++) {
-          stressSum += materialToBary[j][l]*materialToBary[i][k]*(stress[k][l]+rateStress[k][l]);
+          stressSum += materialToBary[j][l]*materialToBary[i][k]
+            *(stress[k][l]+rateStress[k][l]);
         }
       }
       pointSum += t->vertices[j]->wPos * stressSum;
@@ -122,7 +123,8 @@ void Engine::nodeForce(Triangle* t, float lame, float mu)
 void Engine::updatePos(float timeStep) 
 {
   vector<Vertex*>::iterator vertexIter;
-  for (vertexIter = vertices->begin(); vertexIter != vertices->end(); ++vertexIter) {
+  for (vertexIter = vertices->begin(); vertexIter != vertices->end(); 
+      ++vertexIter) {
 
     Vertex * curVertex = *vertexIter;
     vec3 curForce = curVertex->force;
@@ -134,7 +136,8 @@ void Engine::updatePos(float timeStep)
       curVertex->vel = curVelocity;
       curVertex->wPos = curPos;
     }
-    //cout << "New position: " << curVertex->wPos[0] << "," << curVertex->wPos[1] << "," <<curVertex->wPos[2] << endl;
+    //cout << "New position: " << curVertex->wPos[0] << "," 
+    //<< curVertex->wPos[1] << "," <<curVertex->wPos[2] << endl;
   }
 }
 
@@ -150,7 +153,8 @@ void Engine::updateForces(float lame, float mu)
   }
 
   vector<Triangle*>::iterator triangleIter;
-  for (triangleIter = triangles->begin(); triangleIter != triangles->end(); ++triangleIter) {
+  for (triangleIter = triangles->begin(); triangleIter != triangles->end(); 
+      ++triangleIter) {
     nodeForce(*triangleIter, lame, mu);
   }
 }
