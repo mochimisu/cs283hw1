@@ -16,15 +16,15 @@ class Vertex
 {
   public:
     Vertex() {};
-    Vertex(vec3 pos, vec3 mPos, vec3 rest) : wPos(pos), mPos(mPos), rest(rest),
-      force(force), accel(accel) {
+    Vertex(vec3 pos, vec2 mPos) : wPos(pos), mPos(mPos) {
+	  force = vec3(0);
+	  accel = vec3(0);
 	  vel = vec3(0.0);
 	  pinned = false;
 	  };
 
     vec3 wPos;
 	vec2 mPos;
-    vec3 rest;
     vec3 force;
     vec3 accel;
 	vec3 vel;

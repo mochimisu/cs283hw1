@@ -56,6 +56,7 @@ void keyboard(unsigned char key, int x, int y)
       exit(0);
       break;
   }
+  glutPostRedisplay();
 }
 
 void specialKeyboard(int key, int x, int y) 
@@ -97,7 +98,7 @@ void Renderer::init(int argc,char** argv)
   glutMotionFunc(activeMotion);
   glutPassiveMotionFunc(passiveMotion);
   glutSpecialFunc(specialKeyboard);
-  glutIdleFunc(display);
+  //glutIdleFunc(display);
 
     // set some lights
   {
@@ -139,7 +140,7 @@ void Renderer::mainLoop()
 
 void Renderer::stepEngine()
 {
-	engine.step(0.001);
+	engine.step(0.01);
 }
 
 
