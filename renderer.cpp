@@ -140,7 +140,7 @@ void Renderer::mainLoop()
 
 void Renderer::stepEngine()
 {
-	engine.step(0.01);
+	engine.step(0.001);
 }
 
 
