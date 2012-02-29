@@ -12,9 +12,9 @@ public:
 	~Engine();
 	
 	void step(float stepSize);
-	void nodeForce(Triangle* t, float lame, float mu);
+	void nodeForce(Triangle* t, float lame, float mu, float phi, float psi);
 	void updatePos(float stepSize);
-  void updateForces(float lame, float mu);
+  void updateForces(float lame, float mu, float phi, float psi);
 
 	std::vector<Vertex *> *vertices; 
 	std::vector<Triangle *> *triangles;

@@ -15,11 +15,11 @@ Engine::~Engine()
 void Engine::step(float stepSize)
 {
   //TODO: move lame and mu constants somewhere else
-  updateForces(1, 10);
+  updateForces(1, 10, 1, 10);
   updatePos(stepSize);
 }
 
-void Engine::nodeForce(Triangle* t, float lame, float mu)
+void Engine::nodeForce(Triangle* t, float lame, float mu, float phi, float psi)
 {
   //Green Strain
 
@@ -96,7 +96,7 @@ void Engine::nodeForce(Triangle* t, float lame, float mu)
       for (int k=0; k<3; k++) {
         sum += strain[k][k];
       }
-      rateStress[i][j] = lame*sum*delta(i,j) + 2*mu*strain[i][j];
+      rateStress[i][j] = phi*sum*delta(i,j) + 2*psi*rate[i][j];
     }
   }
 
@@ -142,7 +142,7 @@ void Engine::updatePos(float timeStep)
   }
 }
 
-void Engine::updateForces(float lame, float mu)
+void Engine::updateForces(float lame, float mu, float phi, float psi)
 {
   for (vector<Vertex*>::iterator vertIter = vertices->begin();
       vertIter != vertices->end(); ++vertIter) {
@@ -156,6 +156,6 @@ void Engine::updateForces(float lame, float mu)
   vector<Triangle*>::iterator triangleIter;
   for (triangleIter = triangles->begin(); triangleIter != triangles->end(); 
       ++triangleIter) {
-    nodeForce(*triangleIter, lame, mu);
+    nodeForce(*triangleIter, lame, mu, phi, psi);
   }
 }
