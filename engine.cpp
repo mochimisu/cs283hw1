@@ -22,7 +22,6 @@ void Engine::step(float stepSize)
 void Engine::nodeForce(Triangle* t, float lame, float mu, float phi, float psi)
 {
   //Green Strain
-
   Vertex *v1 = t->vertices[0];
   Vertex *v2 = t->vertices[1];
   Vertex *v3 = t->vertices[2];
@@ -43,36 +42,18 @@ void Engine::nodeForce(Triangle* t, float lame, float mu, float phi, float psi)
   mat3 strain = (materialToWorld.transpose()
       *materialToWorld - identity2D());
 
-  /*
-      cout<<"materialToWorld"<<endl<<endl;
-      cout<<materialToWorld<<endl<<endl;
-      cout<<"materialToWorld Transpose"<<endl<<endl;
-      cout<<materialToWorld.transpose()<<endl<<endl;*/
-  //cout<<"strain matrix"<<endl<<endl;
-  //cout << strain << endl << endl;
-
-
   //Stress
   //mat2 stress = mat2(0);
   mat3 stress = mat3(0);
 
   for (int i = 0; i < 3; i++) {
     for (int j = 0; j < 3; j++) {
-#if 0
-      float sum = 0.0;
-      for (int k = 0; k< 3; k++) {
-        sum += lame * strain[k][k] * delta(k,k); 
-      }
-
-      stress[i][j] = sum + 2*mu*strain[i][j];
-#endif
       float sum = 0.0;
       for (int k = 0; k< 3; k++) {
         sum += strain[k][k]; 
       }
 
       stress[i][j] = lame*sum*delta(i,j) + 2*mu*strain[i][j];
-
     }
   }
 
@@ -103,7 +84,6 @@ void Engine::nodeForce(Triangle* t, float lame, float mu, float phi, float psi)
   //Kinetic Forces
   float vol = 0.5 * ((v1->mPos - v2->mPos) ^ (v3->mPos - v2->mPos)).length();
 
-
   for(int i=0; i<3; i++) {
     vec3 pointSum = vec3(0.0);
     for(int j=0; j<3; j++) {
@@ -128,14 +108,26 @@ void Engine::updatePos(float timeStep)
       ++vertexIter) {
 
     Vertex * curVertex = *vertexIter;
-    vec3 curForce = curVertex->force;
+	vec3 curForce = curVertex->force;
     vec3 curAccel = curForce/curVertex->mass;
     vec3 curVelocity = curVertex->vel + curAccel * timeStep;
-    vec3 curPos = curVertex->wPos + curVelocity * timeStep;
+    vec3 prevPos = curVertex->wPos;
+	vec3 curPos = curVertex->wPos + curVelocity * timeStep;
+
+
+	vector<Triangle *> intersectingTris;
+
     if (!curVertex->pinned) {
       curVertex->accel = curAccel;
       curVertex->vel = curVelocity;
-      curVertex->wPos = curPos;
+
+	  vertexCollisionDetect(prevPos, curPos,intersectingTris);
+      if (intersectingTris.empty()) {
+	    curVertex->wPos = curPos;
+	  } else {
+	    cout << "asdf";
+	    curVertex->vel = 0;
+	  }
     }
     //cout << "New position: " << curVertex->wPos[0] << "," 
     //<< curVertex->wPos[1] << "," <<curVertex->wPos[2] << endl;
@@ -158,4 +150,65 @@ void Engine::updateForces(float lame, float mu, float phi, float psi)
       ++triangleIter) {
     nodeForce(*triangleIter, lame, mu, phi, psi);
   }
+}
+
+//returns t value of triangle-ray collision
+void Engine::vertexCollisionDetect(vec3 start, vec3 end, vector<Triangle*>intersectingTri){
+
+	for(std::vector<Triangle *>::iterator iter = triangles->begin();
+		iter != triangles->end(); ++iter) {
+		Triangle * t = *iter;
+		
+		vec3 u, v, n; //triangle vectors
+		float r,a,b;
+		vec3 dir, w0, w; //ray vectors
+		vec3 intersectPt;
+		
+		//get triangle vec u
+		u = t->vertices[1]->wPos - t->vertices[0]->wPos;
+		
+		//get vec v
+		v = t->vertices[2]->wPos - t->vertices[0]->wPos;
+
+		n = u ^ v;
+		if (n == vec3(0)) continue;
+
+		//get direction of the "ray"
+		dir = end - start;
+		
+		w0 = start - t->vertices[0]->wPos;	
+
+		a = -1*n*w0;
+		b = n*dir;
+		
+		//ray goes away from triangle, no intersection
+		r = a / b;
+		if (r < 0.0) continue; 
+		
+		//get intersect point of ray with triangle plane
+		intersectPt = start + r * dir;
+		cout << r << endl;
+	    
+		float uu, uv, vv, wu, wv, D;
+		uu = u*u;
+		uv = u*v;
+		vv = v*v;
+	
+		w = intersectPt - t->vertices[0]->wPos; 
+
+		wu = w*u;
+		wv = w*v;
+
+		D = uv * uv - uu * vv;
+
+		float s, t_0; 
+		s = (uv * wv - vv* wu) / D;
+		t_0 = (uv * wu - uu * wv) / D;
+		
+		if (s < 0.0 || s > 1.0)
+			continue;
+		if (t_0 < 0.0 || (s+t_0) > 1.0)
+			continue;
+		intersectingTri.push_back(t);
+	}
 }

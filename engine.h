@@ -14,7 +14,8 @@ public:
 	void step(float stepSize);
 	void nodeForce(Triangle* t, float lame, float mu, float phi, float psi);
 	void updatePos(float stepSize);
-  void updateForces(float lame, float mu, float phi, float psi);
+    void updateForces(float lame, float mu, float phi, float psi);
+    void vertexCollisionDetect(vec3 start, vec3 end, vector<Triangle*>intersectingTri);
 
 	std::vector<Vertex *> *vertices; 
 	std::vector<Triangle *> *triangles;
