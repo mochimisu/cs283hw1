@@ -57,7 +57,7 @@ void generateMesh2(vector<Triangle*>& triangles, vector<Vertex*>& vertices,
     for(int j=0; j<iterY; j++) {
 	  z = (float)(rand() % 10)/100.0 - 0.5;
       bool pinned = true;//(j==iterY-1) && ((i==iterX-1) || (i==0) || i==ceil(iterX/2));
-      Vertex* v1 = new Vertex(vec3(i*res, z, j*res),vec2(i*res, j*res));
+      Vertex* v1 = new Vertex(vec3(i*res, z, j*res-height/2.0),vec2(i*res, j*res));
       v1->mass = nodeMass;
       v1->pinned = pinned;
       vertices.push_back(v1);
