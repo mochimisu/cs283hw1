@@ -17,20 +17,22 @@ class Vertex
   public:
     Vertex() {};
     Vertex(vec3 pos, vec2 mPos) : wPos(pos), mPos(mPos) {
-	  force = vec3(0);
-	  accel = vec3(0);
-	  vel = vec3(0.0);
-	  pinned = false;
-	  };
+      force = vec3(0);
+      accel = vec3(0);
+      vel = vec3(0.0);
+      pinned = false;
+      marked = 0;
+    };
 
     vec3 wPos;
-	vec2 mPos;
+    vec2 mPos;
     vec3 force;
     vec3 accel;
-	vec3 vel;
+    vec3 vel;
 
-	float mass;
-	bool pinned;
+    float mass;
+    bool pinned;
+    int marked;
 };
 
 #endif 

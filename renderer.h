@@ -14,6 +14,7 @@ public:
   void draw();
   void stepEngine();
   void mainLoop();
+  void drawMarkedPoints();
 
   std::vector<Triangle *> triangles;
   std::vector<Vertex *> vertices;

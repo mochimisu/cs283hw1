@@ -49,6 +49,10 @@ void display()
   glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
   activeRenderer->draw();
 
+  //Marked Vertices
+  glColor3f(0.0,0.9,0.1);
+  activeRenderer->drawMarkedPoints();
+  
   glutSwapBuffers();
 }
 
@@ -179,10 +183,26 @@ void Renderer::stepEngine()
   engine.step(0.0001);
 }
 
+void Renderer::drawMarkedPoints()
+{
+
+  glPointSize(7.0);
+  glBegin(GL_POINTS);
+  for(vector<Vertex *>::iterator vt = vertices.begin();
+      vt != vertices.end(); ++vt) {
+    Vertex * curVert = *vt;
+    if(curVert->marked > 0) {
+      //cout << "asdf" << endl;
+      glVertex3f(curVert->wPos[0], curVert->wPos[1], 0);
+      curVert->marked -= 1;
+    }
+  }
+  glEnd();
+}
 
 void Renderer::draw()
 {
-  //bind buffers later instead of calling glVertex w/e
+    //bind buffers later instead of calling glVertex w/e
   glBegin(GL_TRIANGLES);
   for(vector<Triangle *>::iterator it = triangles.begin(); 
       it != triangles.end(); ++it) {
@@ -195,5 +215,5 @@ void Renderer::draw()
     }
   }
   glEnd();
-
+  
 }

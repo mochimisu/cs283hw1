@@ -106,9 +106,9 @@ void Engine::updatePos(float timeStep)
   vector<Vertex*>::iterator vertexIter;
   vec3 curForce, curAccel, curVelocity, prevPos, curPos;
 
-//test code for intersection
-#if 1
-  curPos = vec3(0,6,5); prevPos = vec3(0,6,-5);
+  //test code for intersection
+#if 0
+  curPos = vec3(0,0,5); prevPos = vec3(0,0,-5);
   Vertex *v1, *v2, *v3;
   v1 = new Vertex(vec3(0,0,0), vec3(0,0,0));
   v2 = new Vertex(vec3(5,0,0), vec3(5,0,0));
@@ -118,33 +118,36 @@ void Engine::updatePos(float timeStep)
 #endif
   for (vertexIter = vertices->begin(); vertexIter != vertices->end(); 
       ++vertexIter) {
-  	Vertex *curVertex = *vertexIter;
-	curForce = curVertex->force;
+
+    Vertex *curVertex = *vertexIter;
+    curForce = curVertex->force;
+
+    for(std::vector<Triangle *>::iterator iter = triangles->begin();
+        iter != triangles->end(); ++iter) {	
+      Triangle * tri = *iter;
+
+      if (vertexCollisionDetect(prevPos, curPos, tri, curVertex)){
+        //cout<<"intersecting tri"<<endl;
+        //curVertex->vel = 0;
+        //curForce = -curForce;
+        //curForce = vec3(0,200,0);
+        //cout << "intersection!" << endl;
+        curVertex->marked = 50;
+      } 
+    }
+    
     curAccel = curForce/curVertex->mass;
     curVelocity = curVertex->vel + curAccel * timeStep;
     prevPos = curVertex->wPos;
-	curPos = curVertex->wPos + curVelocity * timeStep;
+    curPos = curVertex->wPos + curVelocity * timeStep;
 
-	vector<Triangle *> intersectingTris;
+    vector<Triangle *> intersectingTris;
 
     if (!curVertex->pinned) {
       curVertex->accel = curAccel;
       curVertex->vel = curVelocity;
-	  
-	  for(std::vector<Triangle *>::iterator iter = triangles->begin();
-		iter != triangles->end(); ++iter) {	
-		Triangle * tri = *iter;
-		
-	    //if (!vertexCollisionDetect(prevPos, curPos, tri)){
-		    curVertex->wPos = curPos;
-	  	/*
-		} else {
-	  		cout<<"intersecting tri"<<endl;
-	    	curVertex->vel = 0;
-	  	} */
-		curVertex->wPos = curPos;
-	  }
-    }
+      curVertex->wPos = curPos;
+   }
     //cout << "New position: " << curVertex->wPos[0] << "," 
     //<< curVertex->wPos[1] << "," <<curVertex->wPos[2] << endl;
   }
@@ -168,72 +171,146 @@ void Engine::updateForces(float lame, float mu, float phi, float psi)
   }
 }
 
-//returns true if triangle intersects with ray
-bool Engine::vertexCollisionDetect(vec3 start, vec3 end, Triangle *tri){
-	vec3 u, v, n;
-	vec3 dir, w0, w;
-	float r, a, b;
+#if 1
+bool Engine::vertexCollisionDetect(vec3 start, vec3 end, Triangle *tri, Vertex *ver){
 
-	//triangle vertices
-	vec3 t0 = tri->vertices[0]->wPos;
-	vec3 t1 = tri->vertices[1]->wPos;
-	vec3 t2 = tri->vertices[2]->wPos;
+  
+  if (ver == tri->vertices[0] || ver == tri->vertices[1] || ver == tri->vertices[2]) {
+    //cout << "self intersection" << endl;
+    return false;
+  }
 
-	u = t1 - t0;
-	v = t2 - t0;
+  double epsilon = 0.001;
+  vec3 veca = tri->vertices[0]->wPos;
+  vec3 vecb = tri->vertices[1]->wPos;
+  vec3 vecc = tri->vertices[2]->wPos;
 
-	n = u ^ v;
-	if (n == vec3(0)){
-		cout<<1<<endl;
-		return false; //degenerate tri
-	}
+  //cout << "A: " <<veca <<endl << "B: " <<vecb <<endl << "C: " <<vecc <<endl;
 
-	dir = end - start;
-	dir.normalize();
-	w0 = start - t0; 
+  //vec3 vecd(_worldToModel * (ray.direction()), VW);
+  //vec3 vece(_worldToModel * (ray.start()), VW);
+  vec3 vecd = end-start;
+  vec3 vece = start;
 
-	a = -1*(n*w0); 
-	b =  n*dir;
+  vec3 aminusb = veca - vecb;
+  vec3 aminusc = veca - vecc;
+  vec3 aminuse = veca - vece;
 
-	r = a/b; 
+  mat3 cm = mat3(aminusb, aminusc, vecd);
 
-	if (r < 0.0) {//ray goes away from tri
-		cout<<3<<endl;
-		return false;
-	}
+  double eiminushf = (cm[1][1] * cm[2][2]) - (cm[2][1] * cm[1][2]);
+  double gfminusdi = (cm[2][0] * cm[1][2]) - (cm[1][0] * cm[2][2]);
+  double dhminuseg = (cm[1][0] * cm[2][1]) - (cm[1][1] * cm[2][0]);
 
-	//intersect pt of ray and plane
-	vec3 intersectPt = start + (r*dir);
+  double akminusjb = (cm[0][0] * aminuse[1]) - (aminuse[0] * cm[0][1]);
+  double jcminusal = (aminuse[0] * cm[0][2]) - (cm[0][0] * aminuse[2]);
+  double blminuskc = (cm[0][1] * aminuse[2]) - (aminuse[1] * cm[0][2]);
 
-	//is intesect pt inside Tri?
-	float uu, uv, vv, wu, wv, D;
-	uu = u*u;
-	uv = u*v;
-	vv = v*v;
-	w = intersectPt - t0;
-	wu = w*u;
-	wv = w*v;
-	D = (uv*uv) - (uu*vv);
-	
-	//get and test param coords
-	float s, t;
-	cout<<uv*wv<<endl;
-	cout<<vv*wu<<endl;
-	cout<<D<<endl;
-	s = ((uv*wv) - (vv*wu)) / D;
-		
-	if (s < 0.0 || s > 1.0){
-		cout<<4<<endl;
-		cout<<"s is "<<s<<endl;
-		return false;
-	}
-	
-	t = ((uv*wu) - (uu*wv)) / D;
-	if (t < 0.0 || (s+t) > 1.0){
-		cout<<5<<endl;
-		cout<<"t is "<<t<<endl;
-		return false;
-	}
-	
-	return true;
+  double m = (cm[0][0] * eiminushf) + (cm[0][1] * gfminusdi) + (cm[0][2] * dhminuseg);
+
+  double t = - ( (cm[1][2] * akminusjb) + (cm[1][1] * jcminusal) + (cm[1][0] * blminuskc) ) /m;
+  if(t < epsilon)
+    return false;
+
+  double gamma = ( (cm[2][2] * akminusjb) + (cm[2][1] * jcminusal) + (cm[2][0] * blminuskc) ) / m;
+  if(gamma < 0 || gamma > 1)
+    return false;
+
+  double beta = ( (aminuse[0] * eiminushf) + (aminuse[1] * gfminusdi) + (aminuse[2] * dhminuseg) ) / m;
+  if(beta < 0 || (beta > (1 - gamma)))
+    return false;
+
+  //cout << "TR; " << vece << "/" << ray.start() << "," << vecd << "/" << ray.direction() << " intersects " << veca << "," << vecb << "," << vecc << endl << "@" << vece + (vecd * t) << endl;
+  if (t >= 1-epsilon)
+    return false;
+
+cout << "(intersection t): " << t << endl;
+  return true;
+
 }
+
+#else
+
+//returns true if triangle intersects with ray
+bool Engine::vertexCollisionDetect(vec3 start, vec3 end, Triangle *tri, Vertex *ver){
+  vec3 u, v, n;
+  vec3 dir, w0, w;
+  float r, a, b;
+
+  if (ver == tri->vertices[0] || ver == tri->vertices[1] || ver == tri->vertices[2]) {
+    //cout << "self intersection" << endl;
+    return false;
+  }
+
+  //triangle vertices
+  vec3 t0 = tri->vertices[0]->wPos;
+  vec3 t1 = tri->vertices[1]->wPos;
+  vec3 t2 = tri->vertices[2]->wPos;
+
+  u = t1 - t0;
+  v = t2 - t0;
+
+  n = u ^ v;
+  if (n == vec3(0)){
+    //cout<<1<<endl;
+    return false; //degenerate tri
+  }
+
+  dir = end - start;
+  dir.normalize();
+  w0 = start - t0; 
+
+  a = -1*(n*w0); 
+  b =  n*dir;
+
+  r = a/b; 
+
+  if (r < 0.0) {//ray goes away from tri
+    //cout<<3<<endl;
+    return false;
+  }
+
+  //intersect pt of ray and plane
+  vec3 intersectPt = start + (r*dir);
+
+  //is intesect pt inside Tri?
+  float uu, uv, vv, wu, wv, D;
+  uu = u*u;
+  uv = u*v;
+  vv = v*v;
+  w = intersectPt - t0;
+  wu = w*u;
+  wv = w*v;
+  D = (uv*uv) - (uu*vv);
+  cout << "D: " << D << endl;
+
+  //get and test param coords
+  float s, t;
+  //cout<<uv*wv<<endl;
+  //cout<<vv*wu<<endl;
+  //cout<<D<<endl;
+  s = ((uv*wv) - (vv*wu)) / D;
+
+  if (s < 0.0 || s > 1.0){
+    //cout<<4<<endl;
+    //cout<<"s is "<<s<<endl;
+    return false;
+  }
+
+  t = ((uv*wu) - (uu*wv)) / D;
+  if (t < 0.0 || (s+t) > 1.0){
+    //cout<<5<<endl;
+    //cout<<"t is "<<t<<endl;
+    return false;
+  }
+
+
+  float epsilon = 0.1;
+  if ( t > 1-epsilon || t < 0+epsilon ) 
+    return false;
+
+  cout<<"t is "<<t<<endl;
+
+  return true;
+}
+#endif

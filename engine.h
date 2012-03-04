@@ -7,20 +7,20 @@
 
 class Engine {
 
-public:
-	Engine();
-	~Engine();
-	
-	void step(float stepSize);
-	void nodeForce(Triangle* t, float lame, float mu, float phi, float psi);
-	void updatePos(float stepSize);
+  public:
+    Engine();
+    ~Engine();
+
+    void step(float stepSize);
+    void nodeForce(Triangle* t, float lame, float mu, float phi, float psi);
+    void updatePos(float stepSize);
     void updateForces(float lame, float mu, float phi, float psi);
-    bool vertexCollisionDetect(vec3 start, vec3 end, Triangle *tri);
+    bool vertexCollisionDetect(vec3 start, vec3 end, Triangle *tri, Vertex *ver);
 
-	std::vector<Vertex *> *vertices; 
-	std::vector<Triangle *> *triangles;
+    std::vector<Vertex *> *vertices; 
+    std::vector<Triangle *> *triangles;
 
-private:
+  private:
 };
 
 #endif //ENGINE_H
