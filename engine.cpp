@@ -16,7 +16,7 @@ Engine::~Engine()
 void Engine::step(float stepSize)
 {
   //TODO: move lame and mu constants somewhere else
-  updateForces(1, 10, 1, 10);
+  updateForces(1000, 1000, 1,100);
   updatePos(stepSize);
 }
 
@@ -28,15 +28,31 @@ void Engine::nodeForce(Triangle* t, float lame, float mu, float phi, float psi)
   Vertex *v3 = t->vertices[2];
 
   //Beta
+#if 0
   mat3 materialToBary = mat3(
       vec3(v1->mPos[0], v2->mPos[0], v3->mPos[0]),
       vec3(v1->mPos[1], v2->mPos[1], v3->mPos[1]),
       vec3(1, 1, 1 )).inverse();
+#else
+mat3 materialToBary = mat3(
+    vec3(v1->mPos[0]-v1->mPos[0], v2->mPos[0]-v1->mPos[0], v3->mPos[0]-v1->mPos[0]),
+    vec3(v1->mPos[1]-v1->mPos[1], v2->mPos[1]-v1->mPos[1], v3->mPos[1]-v1->mPos[1]),
+    vec3(1, 1, 1 )).inverse();
 
+#endif
+
+#if 0
   mat3 baryToWorld = mat3(
       vec3(v1->wPos[0], v2->wPos[0], v3->wPos[0]),
       vec3(v1->wPos[1], v2->wPos[1], v3->wPos[1]),
       vec3(v1->wPos[2], v2->wPos[2], v3->wPos[2]));
+#else
+  mat3 baryToWorld = mat3(
+vec3(v1->wPos[0]-v1->wPos[0], v2->wPos[0]-v1->wPos[0], v3->wPos[0]-v1->wPos[0]),
+vec3(v1->wPos[1]-v1->wPos[1], v2->wPos[1]-v1->wPos[1], v3->wPos[1]-v1->wPos[1]),
+vec3(v1->wPos[2]-v1->wPos[2], v2->wPos[2]-v1->wPos[2], v3->wPos[2]-v1->wPos[2]));
+
+#endif
 
   mat3 materialToWorld = baryToWorld * materialToBary;
 
@@ -81,6 +97,13 @@ void Engine::nodeForce(Triangle* t, float lame, float mu, float phi, float psi)
     }
   }
 
+  mat3 edges = mat3(
+      v1->wPos[0]-v1->wPos[0],
+      v1->wPos[1]-v1->wPos[0],
+      v1->wPos[2]-v1->wPos[0]);
+
+
+
   //Kinetic Forces
   float vol = 0.5 * ((v1->mPos - v2->mPos) ^ (v3->mPos - v2->mPos)).length();
 
@@ -94,7 +117,9 @@ void Engine::nodeForce(Triangle* t, float lame, float mu, float phi, float psi)
             *(stress[k][l]+rateStress[k][l]);
         }
       }
+      //pointSum += t->vertices[j]->wPos - t->vertices[0]->wPos * stressSum;
       pointSum += t->vertices[j]->wPos * stressSum;
+      //pointSum += edges[j] * stressSum;
     }
     vec3 curForce = -0.5 * vol * pointSum;
     t->vertices[i]->force += curForce;
@@ -126,7 +151,8 @@ void Engine::updatePos(float timeStep)
         iter != triangles->end(); ++iter) {	
       Triangle * tri = *iter;
 
-      if (vertexCollisionDetect(prevPos, curPos, tri, curVertex)){
+      if (false) {
+      //if (vertexCollisionDetect(prevPos, curPos, tri, curVertex)){
         curVertex->vel = -0.1*curVertex->vel;
         //get the triangle's normal, dot it with the curForce
         //subtract this*damping from the curForce      
@@ -138,7 +164,12 @@ void Engine::updatePos(float timeStep)
 
         float dampingMultiplier = 0.7;
         vec3 penaltyForce = dampingMultiplier*(curForce*normal);
-        curForce = curForce - penaltyForce;
+        vec3 collVel = curVertex->vel * normal;
+        //curVertex->vel = curVertex->vel - 10*collVel;
+
+        //curForce = curForce - penaltyForce;
+        //curForce += vec3(0,500,0);
+        
         //cout<<"intersecting tri"<<endl;
         //curVertex->vel = 0;
         //curForce = -curForce;
@@ -148,7 +179,7 @@ void Engine::updatePos(float timeStep)
       } 
     }
     
-    curAccel = curForce/curVertex->mass;
+    curAccel = curForce/curVertex->mass + vec3(0,-9.8,0);
     curVelocity = curVertex->vel + curAccel * timeStep;
     prevPos = curVertex->wPos;
     curPos = curVertex->wPos + curVelocity * timeStep;
@@ -159,6 +190,8 @@ void Engine::updatePos(float timeStep)
       curVertex->accel = curAccel;
       curVertex->vel = curVelocity;
       curVertex->wPos = curPos;
+   } else {
+     //curVertex->wPos = curVertex->wPos - vec3(0,0.001,0);
    }
     //cout << "New position: " << curVertex->wPos[0] << "," 
     //<< curVertex->wPos[1] << "," <<curVertex->wPos[2] << endl;
@@ -173,7 +206,7 @@ void Engine::updateForces(float lame, float mu, float phi, float psi)
     //Reset
     curVert->force = vec3(0);
     //Gravity
-    curVert->force += vec3(0,-9.8*curVert->mass,0);
+    //curVert->force += vec3(0,-9.8*curVert->mass,0);
   }
 
   vector<Triangle*>::iterator triangleIter;
@@ -203,6 +236,11 @@ bool Engine::vertexCollisionDetect(vec3 start, vec3 end, Triangle *tri, Vertex *
   //vec3 vece(_worldToModel * (ray.start()), VW);
   vec3 vecd = end-start;
   vec3 vece = start;
+  //want nonzero length
+  if (vecd.length2() < 0.00000001) {
+    //cout << "asdf: " << vecd.length2() << endl;
+    return false;
+  }
 
   vec3 aminusb = veca - vecb;
   vec3 aminusc = veca - vecc;

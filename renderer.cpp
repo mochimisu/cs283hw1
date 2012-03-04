@@ -64,6 +64,8 @@ void reshape(int w, int h)
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
 
+  //glOrtho(-100, 100, -100, 100, 100, -100);
+  //glOrtho(-10, 10, -10, 10, 10, -10);
   glOrtho(-1, 1, -1, 1, 1, -1);
 }
 
@@ -164,7 +166,9 @@ void Renderer::init(int argc,char** argv)
 
 
   //Generate the mesh
-  generateMesh(triangles, vertices, 0.5, 0.5, 0.05);
+  generateMesh(triangles, vertices, 1.5, 0.5, 0.025);
+  //generateMesh(triangles, vertices, 15, 5, 0.25);
+  //generateMesh2(triangles, vertices, 2, 2, 0.2);
 
   //Set up the engine
   engine = Engine();

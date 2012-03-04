@@ -6,5 +6,6 @@
 #include <vector>
 
 void generateMesh(vector<Triangle*>& triangles, vector<Vertex*>& vertices, float width, float height, float res);
+void generateMesh2(vector<Triangle*>& triangles, vector<Vertex*>& vertices, float width, float height, float res);
 
 #endif
