@@ -132,7 +132,7 @@ void Engine::updatePos(float timeStep)
         //curForce = -curForce;
         //curForce = vec3(0,200,0);
         //cout << "intersection!" << endl;
-        curVertex->marked = 50;
+        curVertex->marked = 500;
       } 
     }
     
