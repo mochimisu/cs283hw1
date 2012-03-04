@@ -16,7 +16,7 @@ Engine::~Engine()
 void Engine::step(float stepSize)
 {
   //TODO: move lame and mu constants somewhere else
-  updateForces(1000, 1000, 1,100);
+  updateForces(10, 100, 1,10);
   updatePos(stepSize);
 }
 
@@ -144,16 +144,30 @@ void Engine::updatePos(float timeStep)
   for (vertexIter = vertices->begin(); vertexIter != vertices->end(); 
       ++vertexIter) {
 
+    
     Vertex *curVertex = *vertexIter;
-    curForce = curVertex->force;
 
+    curForce = curVertex->force;
+    curAccel = curForce/curVertex->mass + vec3(0,-9.8,0);
+    curVelocity = curVertex->vel + curAccel * timeStep;
+    prevPos = curVertex->wPos;
+    curPos = curVertex->wPos + curVelocity * timeStep;
+
+    bool collision = false;
     for(std::vector<Triangle *>::iterator iter = triangles->begin();
         iter != triangles->end(); ++iter) {	
       Triangle * tri = *iter;
+      if (vertexCollisionDetect(prevPos, curPos, tri, curVertex)){
+        collision = true;
+      }
+    }
+    if(collision) {
+      curVertex->marked = 1;
+      cout << "Collision on mpos: " << curVertex->mPos << endl;
+    }
 
-      if (false) {
-      //if (vertexCollisionDetect(prevPos, curPos, tri, curVertex)){
-        curVertex->vel = -0.1*curVertex->vel;
+    /*
+      //if (false) {        curVertex->vel = -0.1*curVertex->vel;
         //get the triangle's normal, dot it with the curForce
         //subtract this*damping from the curForce      
   
@@ -175,21 +189,23 @@ void Engine::updatePos(float timeStep)
         //curForce = -curForce;
         //curForce = vec3(0,200,0);
         //cout << "intersection!" << endl;
-        curVertex->marked = 500;
-      } 
-    }
-    
-    curAccel = curForce/curVertex->mass + vec3(0,-9.8,0);
-    curVelocity = curVertex->vel + curAccel * timeStep;
-    prevPos = curVertex->wPos;
-    curPos = curVertex->wPos + curVelocity * timeStep;
+        
 
+        curForce = vec3(0,9.8,0) * curVertex->mass;
+        curVertex->vel = vec3(0,0,0);
+        */
+
+    
     vector<Triangle *> intersectingTris;
 
     if (!curVertex->pinned) {
       curVertex->accel = curAccel;
       curVertex->vel = curVelocity;
-      curVertex->wPos = curPos;
+      if(!collision) {
+        curVertex->wPos = curPos;
+      } else {
+        cout << "asdf" << endl;
+      }
    } else {
      //curVertex->wPos = curVertex->wPos - vec3(0,0.001,0);
    }
@@ -219,6 +235,8 @@ void Engine::updateForces(float lame, float mu, float phi, float psi)
 #if 1
 bool Engine::vertexCollisionDetect(vec3 start, vec3 end, Triangle *tri, Vertex *ver){
 
+  //cout << "Start: " << start << endl;
+  //cout << "End: " << end << endl;
   
   if (ver == tri->vertices[0] || ver == tri->vertices[1] || ver == tri->vertices[2]) {
     //cout << "self intersection" << endl;
@@ -237,10 +255,11 @@ bool Engine::vertexCollisionDetect(vec3 start, vec3 end, Triangle *tri, Vertex *
   vec3 vecd = end-start;
   vec3 vece = start;
   //want nonzero length
-  if (vecd.length2() < 0.00000001) {
+  if (vecd.length2() < 0.0000000001) {
     //cout << "asdf: " << vecd.length2() << endl;
     return false;
   }
+
 
   vec3 aminusb = veca - vecb;
   vec3 aminusc = veca - vecc;
@@ -273,7 +292,9 @@ bool Engine::vertexCollisionDetect(vec3 start, vec3 end, Triangle *tri, Vertex *
   //cout << "TR; " << vece << "/" << ray.start() << "," << vecd << "/" << ray.direction() << " intersects " << veca << "," << vecb << "," << vecc << endl << "@" << vece + (vecd * t) << endl;
   if (t >= 1-epsilon)
     return false;
-
+  cout << start << ", " << end << endl;
+  cout << vecd << endl;
+  cout << vecd.length2() << endl;
 cout << "(intersection t): " << t << endl;
   return true;
 
