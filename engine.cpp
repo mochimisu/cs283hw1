@@ -127,6 +127,18 @@ void Engine::updatePos(float timeStep)
       Triangle * tri = *iter;
 
       if (vertexCollisionDetect(prevPos, curPos, tri, curVertex)){
+        curVertex->vel = -0.1*curVertex->vel;
+        //get the triangle's normal, dot it with the curForce
+        //subtract this*damping from the curForce      
+  
+        vec3 edge1, edge2, normal;
+        edge1 = tri->vertices[2]->wPos - tri->vertices[0]->wPos;
+        edge2 = tri->vertices[1]->wPos - tri->vertices[0]->wPos;
+        normal = edge1^edge2;
+
+        float dampingMultiplier = 0.7;
+        vec3 penaltyForce = dampingMultiplier*(curForce*normal);
+        curForce = curForce - penaltyForce;
         //cout<<"intersecting tri"<<endl;
         //curVertex->vel = 0;
         //curForce = -curForce;
