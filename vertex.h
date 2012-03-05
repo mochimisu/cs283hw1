@@ -11,6 +11,7 @@
 #define VERTEX_H_
 
 #include <algebra3.h>
+#include <vector>
 
 class Vertex
 {
@@ -35,6 +36,8 @@ class Vertex
     float mass;
     bool pinned;
     int marked;
+
+    //std::vector<Triangle *> *triangles;
 };
 
 #endif 

@@ -13,10 +13,13 @@
 
 #include "vertex.h"
 #include <vector>
+#include "BoundingBox.h"
+
 class Triangle {
 
 public:
   Triangle(Vertex *v1, Vertex *v2, Vertex *v3);
+  BoundingBox boundingBox();
 
   vector<Vertex *> vertices;
 

@@ -89,10 +89,10 @@ void generateMesh2(vector<Triangle*>& triangles, vector<Vertex*>& vertices,
 
   Vertex* vertArray[iterX][iterY];
 
-  float z = -0;
+  float z = -0.2;
   for (int i=0; i<iterX; i++) {
     for(int j=0; j<iterY; j++) {
-	  z = (float)(rand() % 10)/100.0 - 0.5;
+	  //z = (float)(rand() % 10)/100.0 - 0.5;
       bool pinned = true;//(j==iterY-1) && ((i==iterX-1) || (i==0) || i==ceil(iterX/2));
       Vertex* v1 = new Vertex(vec3(i*res, z, j*res-height/2.0),vec2(i*res, j*res));
       v1->mass = nodeMass;

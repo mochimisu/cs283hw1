@@ -17,3 +17,10 @@ Triangle::Triangle(Vertex *v1, Vertex *v2, Vertex *v3)
 	vertices.push_back(v3);
 }
 
+BoundingBox Triangle::boundingBox() {
+  BoundingBox bb = BoundingBox();
+  bb.addPoint(vertices[0]->wPos);
+  bb.addPoint(vertices[1]->wPos);
+  bb.addPoint(vertices[2]->wPos);
+  return bb;
+}

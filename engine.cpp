@@ -13,6 +13,14 @@ Engine::~Engine()
 {
 }
 
+void Engine::init(vector<Vertex *> * verts, vector<Triangle *> * tris, 
+    vector<Edge *> * edgs) {
+  triGrid = new TriangleGrid(vec3(10,10,2), verts, tris);
+  vertices = verts;
+  triangles = tris;
+  edges = edgs;
+}
+
 void Engine::step(float stepSize)
 {
   //TODO: move lame and mu constants somewhere else
@@ -135,7 +143,7 @@ void Engine::updatePos(float timeStep)
   vector<Vertex*>::iterator vertexIter;
   vec3 curForce, curAccel, curVelocity, prevPos, curPos;
 
-
+/*
   vector<Edge*>::iterator iter; 
   for (iter = edges->begin();
       iter != edges->end(); ++iter) {
@@ -161,6 +169,19 @@ void Engine::updatePos(float timeStep)
     if (edgeCollision) {
     }
   }
+  */
+
+  //test code for intersection
+#if 0
+  curPos = vec3(0,0,5); prevPos = vec3(0,0,-5);
+  Vertex *v1, *v2, *v3;
+  v1 = new Vertex(vec3(0,0,0), vec3(0,0,0));
+  v2 = new Vertex(vec3(5,0,0), vec3(5,0,0));
+  v3 = new Vertex(vec3(0,5,0), vec3(0,5,0));
+  Triangle *testTri = new Triangle(v1,v2,v3);
+  cout<<"intersect? "<<vertexCollisionDetect(prevPos,curPos, testTri) <<endl;
+#endif
+  triGrid->update();
 
   for (vertexIter = vertices->begin(); vertexIter != vertices->end(); 
       ++vertexIter) {
@@ -173,26 +194,49 @@ void Engine::updatePos(float timeStep)
     prevPos = curVertex->wPos;
     curPos = curVertex->wPos + curVelocity * timeStep;
 
-    bool collision = false;
+    bool vertCollision = false;
 
     double intersectT = numeric_limits<double>::infinity();
     Triangle * collisionTri;
-    /*
-    for(std::vector<Triangle *>::iterator iter = triangles->begin();
-        iter != triangles->end(); ++iter) {	
-      Triangle * tri = *iter;
+
+
+    vector<Triangle *> * startTris = triGrid->findTriangles(prevPos);
+    vector<Triangle *> * endTris = triGrid->findTriangles(curPos);
+    //cout << "start tris: " << startTris->size() << endl;
+    //cout << "end tris: " << endTris->size() << endl;
+
+
+    for(std::vector<Triangle *>::iterator iter = startTris->begin();
+        iter != startTris->end(); ++iter) {	      Triangle * tri = *iter;
       double interT = vertexCollisionDetect(prevPos, curPos, tri, curVertex);
 
       if (interT > 0){
         vertCollision = true;
         collisionTri = tri;
         intersectT = min(intersectT, interT);
-      }
-    }
+      }    
 
+    } 
+    
+    if(startTris != endTris) {
+      //cout << "boundary crossing" << endl;
+
+      for(std::vector<Triangle *>::iterator iter = endTris->begin();
+          iter != endTris->end(); ++iter) {	
+        Triangle * tri = *iter;
+        double interT = vertexCollisionDetect(prevPos, curPos, tri, curVertex);
+        if (interT > 0){
+          vertCollision = true;
+          collisionTri = tri;
+          intersectT = min(intersectT, interT);
+        }
+      }
+
+    } else {
+      //cout << "no boundary cross" << endl;
+    }
+    
     if(vertCollision) {
-    } */
-    if(collision) {
       curVertex->marked = 100;
       cout << "Collision on mpos: " << curVertex->mPos << endl;
 
@@ -255,6 +299,7 @@ void Engine::updatePos(float timeStep)
     //cout << "New position: " << curVertex->wPos[0] << "," 
     //<< curVertex->wPos[1] << "," <<curVertex->wPos[2] << endl;
   }
+
 }
 
 void Engine::updateForces(float lame, float mu, float phi, float psi)

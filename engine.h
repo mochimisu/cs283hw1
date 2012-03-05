@@ -5,12 +5,14 @@
 #include "triangle.h"
 #include "edge.h"
 #include <vector>
+#include "grid.h"
 
 class Engine {
 
   public:
     Engine();
     ~Engine();
+    void init(vector<Vertex *> * verts, vector<Triangle *> * tris, vector<Edge *> * edges);
 
     void step(float stepSize);
     void nodeForce(Triangle* t, float lame, float mu, float phi, float psi);
@@ -24,6 +26,7 @@ class Engine {
     std::vector<Edge *> *edges;
 
   private:
+    TriangleGrid * triGrid;
 };
 
 #endif //ENGINE_H

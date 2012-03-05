@@ -20,6 +20,7 @@ const GLfloat one[] = {1,1,1,1};                 // Specular on teapot
 const GLfloat medium[] = {1,1,1,1};        // Diffuse on teapot
 const GLfloat small[] = {0.2,0.2,0.2,1};         // Ambient on teapot
 const GLfloat none[] = {0,0,0,1};
+const GLfloat red[] = {1,0,0,1};
 const GLfloat high[] = {100};                      // Shininess of teapot
 GLfloat light0[4],light1[4]; 
 
@@ -86,22 +87,23 @@ void display()
   glUniform4fv(diffuse,1,medium); 
   glUniform4fv(ambient,1,small); 
   //glUniform4fv(diffuse,1,small); 
-  glUniform4fv(specular,1,one); 
+  glUniform4fv(specular,1,none); 
   glUniform1fv(shininess,1,high); 
   glUniform1i(islight,true);
 
   //Wireframe
-  glColor3f(1,1,1);
   glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
   activeRenderer->draw();
 
   //Normal
-  glColor3f(0.7,0.0,0.3);
   glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
   activeRenderer->draw();
 
   //Marked Vertices
-  glColor3f(0.0,0.9,0.1);
+  glUniform4fv(specular,1,red); 
+
+  glUniform4fv(diffuse,1,red); 
+  glUniform4fv(ambient,1,red); 
   activeRenderer->drawMarkedPoints();
 
   glutSwapBuffers();
@@ -237,13 +239,12 @@ void Renderer::init(int argc,char** argv)
   //generateMesh(triangles, vertices, 15, 5, 0.25);
   generateMesh(triangles, vertices, edges, 1, 1, 0.05);
   //generateMesh(triangles, vertices, 1, 1, 0.05);
-  //generateMesh2(triangles, vertices, 2, 2, 0.2);
+  generateMesh2(triangles, vertices, 2, 2, 0.2);
 
   //Set up the engine
   engine = Engine();
-  engine.vertices = &vertices;
-  engine.triangles = &triangles;
-  engine.edges = &edges;
+  engine.init(&vertices, &triangles, &edges);
+
 
 }
 
