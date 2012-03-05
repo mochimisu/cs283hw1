@@ -238,16 +238,16 @@ void Engine::updatePos(float timeStep)
     
     if(vertCollision) {
       curVertex->marked = 100;
-      cout << "Collision on mpos: " << curVertex->mPos << endl;
+      //cout << "Collision on mpos: " << curVertex->mPos << endl;
 
       vec3 edge1, edge2, normal;
       edge1 = collisionTri->vertices[2]->wPos - collisionTri->vertices[0]->wPos;
       edge2 = collisionTri->vertices[1]->wPos - collisionTri->vertices[0]->wPos;
       normal = (edge1^edge2).normalize();
-      float dampingMultiplier = 100.7;
+      float dampingMultiplier = 0.7;
       vec3 penaltyForce = dampingMultiplier * (-curForce*normal);
       vec3 collVel = curVelocity * normal;
-      cout << "collvel: " << collVel << endl;
+      //cout << "collvel: " << collVel << endl;
       //curVelocity = curVelocity - collVel + penaltyForce/curVertex->mass * timeStep;
       if((curPos - prevPos).length2() > 0.0001) {
         curPos = prevPos;// + intersectT*(curPos-prevPos);

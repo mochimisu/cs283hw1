@@ -120,9 +120,9 @@ void reshape(int w, int h)
   //glOrtho(-100, 100, -100, 100, 100, -100);
   //glOrtho(-10, 10, -10, 10, 10, -10);
   
-  glOrtho(-2, 2, -2, 2, 2, -2);
+  //glOrtho(-1.5, 1.5, -1.5, 1.5, 1.5, -1.5);
 
-  //glOrtho(-1, 1, -1, 1, 1, -1);
+  glOrtho(-1, 1, -1, 1, 1, -1);
 }
 
 void keyboard(unsigned char key, int x, int y)
@@ -239,7 +239,7 @@ void Renderer::init(int argc,char** argv)
   //generateMesh(triangles, vertices, 15, 5, 0.25);
   generateMesh(triangles, vertices, edges, 1, 1, 0.05);
   //generateMesh(triangles, vertices, 1, 1, 0.05);
-  generateMesh2(triangles, vertices, 2, 2, 0.2);
+  generateMesh2(triangles, vertices, edges, 2, 2, 0.2);
 
   //Set up the engine
   engine = Engine();
