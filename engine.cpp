@@ -230,7 +230,6 @@ void Engine::updatePos(float timeStep)
     vector<Triangle *> * endTris = triGrid->findTriangles(curPos);
     //cout << "start tris: " << startTris->size() << endl;
     //cout << "end tris: " << endTris->size() << endl;
-/*
 for(std::vector<Triangle *>::iterator iter = startTris->begin();
     iter != startTris->end(); ++iter) {	      Triangle * tri = *iter;
   double interT = vertexCollisionDetect(prevPos, curPos, tri, curVertex);
@@ -259,7 +258,7 @@ if(startTris != endTris) {
 
 } else {
   //cout << "no boundary cross" << endl;
-}*/
+}
 
     if(vertCollision) {
       curVertex->marked = 100;

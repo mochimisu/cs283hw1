@@ -257,7 +257,7 @@ void Renderer::mainLoop()
 
 void Renderer::stepEngine()
 {
-  engine.step(0.00005);
+  engine.step(0.00007);
 }
 
 void Renderer::drawMarkedPoints()
