@@ -16,7 +16,7 @@ Engine::~Engine()
 void Engine::step(float stepSize)
 {
   //TODO: move lame and mu constants somewhere else
-  updateForces(10, 100, 1,10);
+  updateForces(100000, 1000, 1, 500);
   updatePos(stepSize);
 }
 
@@ -34,9 +34,13 @@ void Engine::nodeForce(Triangle* t, float lame, float mu, float phi, float psi)
       vec3(v1->mPos[1], v2->mPos[1], v3->mPos[1]),
       vec3(1, 1, 1 )).inverse();
 #else
+vec2 v1_mPos_norm = vec2(0);
+vec2 v2_mPos_norm = (v2->mPos - v1->mPos);
+vec2 v3_mPos_norm = (v3->mPos - v1->mPos);
+
 mat3 materialToBary = mat3(
-    vec3(v1->mPos[0]-v1->mPos[0], v2->mPos[0]-v1->mPos[0], v3->mPos[0]-v1->mPos[0]),
-    vec3(v1->mPos[1]-v1->mPos[1], v2->mPos[1]-v1->mPos[1], v3->mPos[1]-v1->mPos[1]),
+    vec3(v1_mPos_norm[0], v2_mPos_norm[0], v3_mPos_norm[0]),
+    vec3(v1_mPos_norm[1], v2_mPos_norm[1], v3_mPos_norm[1]),
     vec3(1, 1, 1 )).inverse();
 
 #endif
@@ -156,6 +160,7 @@ void Engine::updatePos(float timeStep)
     bool collision = false;
     double intersectT = numeric_limits<double>::infinity();
     Triangle * collisionTri;
+    /*
     for(std::vector<Triangle *>::iterator iter = triangles->begin();
         iter != triangles->end(); ++iter) {	
       Triangle * tri = *iter;
@@ -165,7 +170,7 @@ void Engine::updatePos(float timeStep)
         collisionTri = tri;
         intersectT = min(intersectT, interT);
       }
-    }
+    } */
     if(collision) {
       curVertex->marked = 100;
       cout << "Collision on mpos: " << curVertex->mPos << endl;
