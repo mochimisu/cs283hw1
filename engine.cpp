@@ -290,10 +290,11 @@ if(startTris != endTris) {
         curForce = vec3(0,9.8,0) * curVertex->mass;
         curVertex->vel = vec3(0,0,0);
         */
+/*
 
 if(curPos[1] < 0) {
   curPos[1] = 0;
-}
+}*/
     
 
     if (!curVertex->pinned) {
