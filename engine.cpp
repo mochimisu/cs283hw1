@@ -247,17 +247,19 @@ void Engine::updatePos(float timeStep)
       edge1 = collisionTri->vertices[2]->wPos - collisionTri->vertices[0]->wPos;
       edge2 = collisionTri->vertices[1]->wPos - collisionTri->vertices[0]->wPos;
       normal = (edge1^edge2).normalize();
+      /*
       float dampingMultiplier = 0.7;
       vec3 penaltyForce = dampingMultiplier * (-curForce*normal);
       vec3 collVel = curVelocity * normal;
       //cout << "collvel: " << collVel << endl;
       //curVelocity = curVelocity - collVel + penaltyForce/curVertex->mass * timeStep;
-      if((curPos - prevPos).length2() > 0.0001) {
-        curPos = prevPos;// + intersectT*(curPos-prevPos);
-      } else {
-        curPos = prevPos;
-      }
-      //curPos = curVertex->wPos + curVelocity * timeStep;
+      */
+      if(normal * curVelocity < 0)
+        normal = -normal;
+      float magVel = curVelocity * normal*20;
+      curVelocity = curVelocity - magVel*normal;
+
+      curPos = curVertex->wPos + curVelocity * timeStep;
     }
 
     /*
