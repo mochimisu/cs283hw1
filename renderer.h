@@ -3,6 +3,7 @@
 
 #include "triangle.h"
 #include "engine.h"
+#include "edge.h"
 #include <GL/glut.h>   
 
 
@@ -20,6 +21,7 @@ public:
 
   std::vector<Triangle *> triangles;
   std::vector<Vertex *> vertices;
+  std::vector<Edge *> edges;
 
   Engine engine;
 

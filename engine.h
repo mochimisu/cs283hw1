@@ -3,6 +3,7 @@
 
 #include "vertex.h"
 #include "triangle.h"
+#include "edge.h"
 #include <vector>
 
 class Engine {
@@ -16,9 +17,11 @@ class Engine {
     void updatePos(float stepSize);
     void updateForces(float lame, float mu, float phi, float psi);
     double vertexCollisionDetect(vec3 start, vec3 end, Triangle *tri, Vertex *ver);
+    double edgeCollisionDetect(Edge *edge, Triangle *tri, Vertex *ver);
 
     std::vector<Vertex *> *vertices; 
     std::vector<Triangle *> *triangles;
+    std::vector<Edge *> *edges;
 
   private:
 };

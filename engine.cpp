@@ -131,20 +131,36 @@ void Engine::updatePos(float timeStep)
   vector<Vertex*>::iterator vertexIter;
   vec3 curForce, curAccel, curVelocity, prevPos, curPos;
 
-  //test code for intersection
-#if 0
-  curPos = vec3(0,0,5); prevPos = vec3(0,0,-5);
-  Vertex *v1, *v2, *v3;
-  v1 = new Vertex(vec3(0,0,0), vec3(0,0,0));
-  v2 = new Vertex(vec3(5,0,0), vec3(5,0,0));
-  v3 = new Vertex(vec3(0,5,0), vec3(0,5,0));
-  Triangle *testTri = new Triangle(v1,v2,v3);
-  cout<<"intersect? "<<vertexCollisionDetect(prevPos,curPos, testTri) <<endl;
-#endif
+
+  vector<Edge*>::iterator iter; 
+  for (iter = edges->begin();
+      iter != edges->end(); ++iter) {
+
+    Edge *e = *iter;
+    bool edgeCollision = false;
+    double intersectV = numeric_limits<double>::infinity();
+    Triangle *cTri; //colliding triangle with edge
+
+    Vertex *ver = new Vertex(vec3(0,0,0),vec3(0,0,0)); //dummy 
+
+    for(std::vector<Triangle *>::iterator iter = triangles->begin();
+        iter != triangles->end(); ++iter) {	
+      Triangle * tri = *iter;
+      double interV = edgeCollisionDetect(e, tri, ver);
+
+      if (interV > 0){
+        edgeCollision = true;
+        cTri = tri;
+        intersectV = min(intersectV, interV);
+      }
+    }
+    if (edgeCollision) {
+    }
+  }
+
   for (vertexIter = vertices->begin(); vertexIter != vertices->end(); 
       ++vertexIter) {
 
-    
     Vertex *curVertex = *vertexIter;
 
     curForce = curVertex->force;
@@ -153,20 +169,23 @@ void Engine::updatePos(float timeStep)
     prevPos = curVertex->wPos;
     curPos = curVertex->wPos + curVelocity * timeStep;
 
-    bool collision = false;
+    bool vertCollision = false;
+
     double intersectT = numeric_limits<double>::infinity();
     Triangle * collisionTri;
     for(std::vector<Triangle *>::iterator iter = triangles->begin();
         iter != triangles->end(); ++iter) {	
       Triangle * tri = *iter;
       double interT = vertexCollisionDetect(prevPos, curPos, tri, curVertex);
+
       if (interT > 0){
-        collision = true;
+        vertCollision = true;
         collisionTri = tri;
         intersectT = min(intersectT, interT);
       }
     }
-    if(collision) {
+
+    if(vertCollision) {
       curVertex->marked = 100;
       cout << "Collision on mpos: " << curVertex->mPos << endl;
 
@@ -249,7 +268,6 @@ void Engine::updateForces(float lame, float mu, float phi, float psi)
   }
 }
 
-#if 1
 double Engine::vertexCollisionDetect(vec3 start, vec3 end, Triangle *tri, Vertex *ver){
 
   //cout << "Start: " << start << endl;
@@ -312,13 +330,17 @@ double Engine::vertexCollisionDetect(vec3 start, vec3 end, Triangle *tri, Vertex
   //cout << start << ", " << end << endl;
   //cout << vecd << endl;
   //cout << vecd.length2() << endl;
-cout << "(intersection t): " << t << endl;
+  //cout << "(intersection t): " << t << endl;
   return t;
 
 }
 
-#else
-
+double Engine::edgeCollisionDetect(Edge *edge, Triangle *tri, Vertex *ver){
+  vec3 start = edge->vertices[0]->wPos;
+  vec3 end = edge->vertices[1]->wPos;
+  return vertexCollisionDetect(start, end, tri, ver);
+}
+#if 0
 //returns true if triangle intersects with ray
 bool Engine::vertexCollisionDetect(vec3 start, vec3 end, Triangle *tri, Vertex *ver){
   vec3 u, v, n;

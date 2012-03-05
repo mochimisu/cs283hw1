@@ -234,13 +234,14 @@ void Renderer::init(int argc,char** argv)
   //Generate the mesh
   //generateMesh(triangles, vertices, 1.5, 0.5, 0.025);
   //generateMesh(triangles, vertices, 15, 5, 0.25);
-  generateMesh(triangles, vertices, 1, 1, 0.1);
+  generateMesh(triangles, vertices, edges, 1, 1, 0.1);
   //generateMesh2(triangles, vertices, 2, 2, 0.2);
 
   //Set up the engine
   engine = Engine();
   engine.vertices = &vertices;
   engine.triangles = &triangles;
+  engine.edges = &edges;
 
 }
 
