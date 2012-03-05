@@ -19,6 +19,7 @@ const GLfloat light_specular1[] = {0.6,0.6,0.6,1};   // Specular of light 1
 const GLfloat one[] = {1,1,1,1};                 // Specular on teapot
 const GLfloat medium[] = {1,1,1,1};        // Diffuse on teapot
 const GLfloat small[] = {0.2,0.2,0.2,1};         // Ambient on teapot
+const GLfloat none[] = {0,0,0,1};
 const GLfloat high[] = {100};                      // Shininess of teapot
 GLfloat light0[4],light1[4]; 
 
@@ -168,8 +169,8 @@ void passiveMotion(int x, int y)
 
 Renderer::Renderer()
 {
-  width = 600;
-  height = 600;
+  width = 1024;
+  height = 800;
   orientation = identity3D();
 }
 
@@ -234,7 +235,8 @@ void Renderer::init(int argc,char** argv)
   //Generate the mesh
   //generateMesh(triangles, vertices, 1.5, 0.5, 0.025);
   //generateMesh(triangles, vertices, 15, 5, 0.25);
-  generateMesh(triangles, vertices, edges, 1, 1, 0.1);
+  generateMesh(triangles, vertices, edges, 1, 1, 0.05);
+  //generateMesh(triangles, vertices, 1, 1, 0.05);
   //generateMesh2(triangles, vertices, 2, 2, 0.2);
 
   //Set up the engine
@@ -252,7 +254,7 @@ void Renderer::mainLoop()
 
 void Renderer::stepEngine()
 {
-  engine.step(0.0001);
+  engine.step(0.00005);
 }
 
 void Renderer::drawMarkedPoints()
