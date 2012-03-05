@@ -17,7 +17,7 @@ Triangle::Triangle(Vertex *v1, Vertex *v2, Vertex *v3)
   vertices.push_back(v3);
   simulate = true;
 }
-
+/*
 BoundingBox Triangle::boundingBox() {
   BoundingBox bb = BoundingBox();
   bb.addPoint(vertices[0]->wPos);
@@ -25,3 +25,4 @@ BoundingBox Triangle::boundingBox() {
   bb.addPoint(vertices[2]->wPos);
   return bb;
 }
+*/
