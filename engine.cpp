@@ -19,6 +19,26 @@ void Engine::init(vector<Vertex *> * verts, vector<Triangle *> * tris,
   vertices = verts;
   triangles = tris;
   edges = edgs;
+
+  for(vector<Triangle *>::iterator tr = tris->begin(); tr != tris->end(); ++tr) {
+    Triangle * t = *tr;
+
+    Vertex *v1 = t->vertices[0];
+    Vertex *v2 = t->vertices[1];
+    Vertex *v3 = t->vertices[2];
+
+
+    vec2 v1_mPos_norm = vec2(0);
+    vec2 v2_mPos_norm = (v2->mPos - v1->mPos);
+    vec2 v3_mPos_norm = (v3->mPos - v1->mPos);
+
+    mat3 materialToBary = mat3(
+        vec3(v1_mPos_norm[0], v2_mPos_norm[0], v3_mPos_norm[0]),
+        vec3(v1_mPos_norm[1], v2_mPos_norm[1], v3_mPos_norm[1]),
+        vec3(1, 1, 1 )).inverse();
+
+    t->matToBary = materialToBary;
+  }
 }
 
 void Engine::step(float stepSize)
@@ -45,6 +65,7 @@ void Engine::nodeForce(Triangle* t, float lame, float mu, float phi, float psi)
       vec3(v1->mPos[1], v2->mPos[1], v3->mPos[1]),
       vec3(1, 1, 1 )).inverse();
 #else
+  /*
 vec2 v1_mPos_norm = vec2(0);
 vec2 v2_mPos_norm = (v2->mPos - v1->mPos);
 vec2 v3_mPos_norm = (v3->mPos - v1->mPos);
@@ -53,7 +74,9 @@ mat3 materialToBary = mat3(
     vec3(v1_mPos_norm[0], v2_mPos_norm[0], v3_mPos_norm[0]),
     vec3(v1_mPos_norm[1], v2_mPos_norm[1], v3_mPos_norm[1]),
     vec3(1, 1, 1 )).inverse();
+*/
 
+mat3 materialToBary = t->matToBary;
 #endif
 
 #if 0

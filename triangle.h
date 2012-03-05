@@ -13,6 +13,7 @@
 
 #include "vertex.h"
 #include <vector>
+#include <algebra3.h>
 
 class Triangle {
 
@@ -21,6 +22,8 @@ public:
 
   vector<Vertex *> vertices;
   bool simulate;
+
+  mat3 matToBary;
 
 private:
 };
