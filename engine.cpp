@@ -207,38 +207,37 @@ void Engine::updatePos(float timeStep)
     vector<Triangle *> * endTris = triGrid->findTriangles(curPos);
     //cout << "start tris: " << startTris->size() << endl;
     //cout << "end tris: " << endTris->size() << endl;
+/*
+for(std::vector<Triangle *>::iterator iter = startTris->begin();
+    iter != startTris->end(); ++iter) {	      Triangle * tri = *iter;
+  double interT = vertexCollisionDetect(prevPos, curPos, tri, curVertex);
 
+  if (interT > 0){
+    vertCollision = true;
+    collisionTri = tri;
+    intersectT = min(intersectT, interT);
+  }    
 
-    for(std::vector<Triangle *>::iterator iter = startTris->begin();
-        iter != startTris->end(); ++iter) {	      Triangle * tri = *iter;
-      double interT = vertexCollisionDetect(prevPos, curPos, tri, curVertex);
+} 
 
-      if (interT > 0){
-        vertCollision = true;
-        collisionTri = tri;
-        intersectT = min(intersectT, interT);
-      }    
+if(startTris != endTris) {
+  //cout << "boundary crossing" << endl;
 
-    } 
-    
-    if(startTris != endTris) {
-      //cout << "boundary crossing" << endl;
-
-      for(std::vector<Triangle *>::iterator iter = endTris->begin();
-          iter != endTris->end(); ++iter) {	
-        Triangle * tri = *iter;
-        double interT = vertexCollisionDetect(prevPos, curPos, tri, curVertex);
-        if (interT > 0){
-          vertCollision = true;
-          collisionTri = tri;
-          intersectT = min(intersectT, interT);
-        }
-      }
-
-    } else {
-      //cout << "no boundary cross" << endl;
+  for(std::vector<Triangle *>::iterator iter = endTris->begin();
+      iter != endTris->end(); ++iter) {	
+    Triangle * tri = *iter;
+    double interT = vertexCollisionDetect(prevPos, curPos, tri, curVertex);
+    if (interT > 0){
+      vertCollision = true;
+      collisionTri = tri;
+      intersectT = min(intersectT, interT);
     }
-    
+  }
+
+} else {
+  //cout << "no boundary cross" << endl;
+}*/
+
     if(vertCollision) {
       curVertex->marked = 100;
       //cout << "Collision on mpos: " << curVertex->mPos << endl;
@@ -256,10 +255,11 @@ void Engine::updatePos(float timeStep)
       */
       if(normal * curVelocity < 0)
         normal = -normal;
-      float magVel = curVelocity * normal*20;
+      float magVel = curVelocity * normal * 1.7;
       curVelocity = curVelocity - magVel*normal;
 
       curPos = curVertex->wPos + curVelocity * timeStep;
+      //curPos = prevPos;
     }
 
     /*
@@ -291,8 +291,10 @@ void Engine::updatePos(float timeStep)
         curVertex->vel = vec3(0,0,0);
         */
 
+if(curPos[1] < 0) {
+  curPos[1] = 0;
+}
     
-    vector<Triangle *> intersectingTris;
 
     if (!curVertex->pinned) {
       curVertex->accel = curAccel;

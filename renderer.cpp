@@ -237,10 +237,11 @@ void Renderer::init(int argc,char** argv)
   //Generate the mesh
   //generateMesh(triangles, vertices, 1.5, 0.5, 0.025);
   //generateMesh(triangles, vertices, 15, 5, 0.25);
-  generateMesh(triangles, vertices, edges, 1, 1, 0.05);
-  //generateMesh(triangles, vertices, 1, 1, 0.05);
-  //generateMesh2(triangles, vertices, edges, 2, 2, 0.2);
-  loadOBJ(triangles, vertices, edges, "sphere.obj");
+  //generateMesh3(triangles, vertices, edges, 1, 1, 0.05);
+  //generateMesh(triangles, vertices, edges, 1, 1, 0.025);
+  generateMesh(triangles, vertices, edges, 1, 1, 0.025);
+  //generateMesh2(triangles, vertices, edges, 1, 1, 0.05);
+  //loadOBJ(triangles, vertices, edges, "sphere.obj");
 
   //Set up the engine
   engine = Engine();
