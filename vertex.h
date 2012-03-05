@@ -29,6 +29,8 @@ class Vertex
     vec3 force;
     vec3 accel;
     vec3 vel;
+    vec3 norm;
+    int normCount;
 
     float mass;
     bool pinned;

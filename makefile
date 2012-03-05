@@ -32,7 +32,7 @@ endif
 
 CC := gcc
 CXX := g++
-CXXFLAGS := -g -Wall -O3 -fmessage-length=0 $(INCLUDE) $(MACROS)
+CXXFLAGS := -g -Wall -O3 -fmessage-length=0 -DGL_GLEXT_PROTOTYPES $(INCLUDE) $(MACROS)
 LDFLAGS := $(FRAMEWORK) $(LIBRARY)
 #-----------------------------------------
 %.o : %.cpp

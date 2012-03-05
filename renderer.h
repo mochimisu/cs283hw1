@@ -3,6 +3,8 @@
 
 #include "triangle.h"
 #include "engine.h"
+#include <GL/glut.h>   
+
 
 class Renderer {
 
