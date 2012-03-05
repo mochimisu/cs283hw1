@@ -30,6 +30,9 @@ void Engine::step(float stepSize)
 
 void Engine::nodeForce(Triangle* t, float lame, float mu, float phi, float psi)
 {
+  if(!t->simulate) {
+    return;
+  }
   //Green Strain
   Vertex *v1 = t->vertices[0];
   Vertex *v2 = t->vertices[1];

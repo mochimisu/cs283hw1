@@ -22,6 +22,7 @@ public:
   BoundingBox boundingBox();
 
   vector<Vertex *> vertices;
+  bool simulate;
 
 private:
 };

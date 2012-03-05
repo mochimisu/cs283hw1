@@ -12,9 +12,10 @@
 
 Triangle::Triangle(Vertex *v1, Vertex *v2, Vertex *v3) 
 {
-	vertices.push_back(v1);
-	vertices.push_back(v2);
-	vertices.push_back(v3);
+  vertices.push_back(v1);
+  vertices.push_back(v2);
+  vertices.push_back(v3);
+  simulate = true;
 }
 
 BoundingBox Triangle::boundingBox() {

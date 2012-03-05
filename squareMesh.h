@@ -12,4 +12,8 @@ void generateMesh(vector<Triangle*>& triangles, vector<Vertex*>& vertices, \
 void generateMesh2(vector<Triangle*>& triangles, vector<Vertex*>& vertices, \
                   vector<Edge *>& edges, \
                   float width, float height, float res);
+
+void loadOBJ(vector<Triangle*>& triangles, vector<Vertex*>& vertices, \
+                  vector<Edge *>& edges, \
+                  string fname);
 #endif
