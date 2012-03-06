@@ -319,7 +319,7 @@ if(curPos[1] < 0) {
 
 //hardcoded sphere
 vec3 center = vec3(0,-0.3,0);
-float radsq = 0.04;
+float radsq = 0.091;
 if((curPos - center).length2() < radsq) {
   curVelocity = vec3(0);
   curPos = prevPos;

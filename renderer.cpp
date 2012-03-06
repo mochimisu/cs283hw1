@@ -124,7 +124,7 @@ void reshape(int w, int h)
   
   //glOrtho(-1.5, 1.5, -1.5, 1.5, 1.5, -1.5);
 
-  glOrtho(-1, 1, -1, 1, 1, -1);
+  glOrtho(-1, 1, -2, 1, 1, -2);
 }
 
 void keyboard(unsigned char key, int x, int y)
@@ -243,7 +243,8 @@ void Renderer::init(int argc,char** argv)
   //generateMesh(triangles, vertices, 15, 5, 0.25);
   //generateMesh3(triangles, vertices, edges, 1, 1, 0.05);
   //generateMesh(triangles, vertices, edges, 1, 1, 0.025);
-  generateMesh(triangles, vertices, edges, 1, 1, 0.025);
+  //generateMesh(triangles, vertices, edges, 1, 1, 0.025);
+  generateMesh3(triangles, vertices, edges, 1.3, 1.3, 0.025);
   //generateMesh2(triangles, vertices, edges, 1, 1, 0.05);
   loadOBJ(triangles, vertices, edges, "sphere.obj");
 
@@ -339,7 +340,7 @@ void Renderer::draw()
 void Renderer::saveFrame() {
   if(fCount == 0) {
     imgSaver->saveFrame();
-      activeRenderer->orientation = activeRenderer->orientation * 
+      //activeRenderer->orientation = activeRenderer->orientation * 
       rotation3D(vec3(0,1,0), -0.1);
   }
   fCount = (fCount + 1)%20;

@@ -23,7 +23,7 @@ void generateMesh(vector<Triangle*>& triangles, vector<Vertex*>& vertices, \
   for (int i=0; i<iterX; i++) {
     for(int j=0; j<iterY; j++) {
       z = (float)(rand() % 10)/150.0;
-      bool pinned = (j==iterY-1) && ((i==iterX-1) || (i==0));
+      bool pinned = false;// (j==iterY-1) && ((i==iterX-1) || (i==0));
       Vertex* v1 = new Vertex(vec3(i*res-width/2.0, j*res, z),vec2(i*res, j*res));
       v1->mass = nodeMass;
       v1->pinned = pinned;
@@ -176,9 +176,9 @@ void generateMesh3(vector<Triangle*>& triangles, vector<Vertex*>& vertices, \
   float z = -0;
   for (int i=0; i<iterX; i++) {
     for(int j=0; j<iterY; j++) {
-      z = (float)(rand() % 10)/150.0;
-      bool pinned = (j==iterY-1) && (i==0);
-      Vertex* v1 = new Vertex(vec3(i*res, j*res, z),vec2(i*res, j*res));
+      z = (float)(rand() % 10)/2000.0 + 0.5;
+      bool pinned = false; //(j==iterY-1) && (i==0);
+      Vertex* v1 = new Vertex(vec3(i*res-width/2,z,j*res-height/2),vec2(i*res, j*res));
       v1->mass = nodeMass;
       v1->pinned = pinned;
       vertices.push_back(v1);
@@ -315,7 +315,7 @@ void loadOBJ(vector<Triangle*>& triangles, vector<Vertex*>& vertices, \
     for(vector<vec3>::iterator v = verts.begin(); v != verts.end(); ++ v) {
       vec3 worldPos = *v;
       //do transformations here for lack of better place to do them
-      worldPos = 0.2 * worldPos;
+      worldPos = 0.3 * worldPos;
       worldPos -= vec3(0,0.3,0);
 
       Vertex * newVert = new Vertex(worldPos, vec2(worldPos[0], worldPos[1]));
