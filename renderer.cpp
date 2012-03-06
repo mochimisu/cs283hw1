@@ -92,21 +92,23 @@ void display()
   glUniform1i(islight,true);
 
   //Wireframe
-  glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-  activeRenderer->draw();
+  //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+  //activeRenderer->draw();
 
   //Normal
   glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
   activeRenderer->draw();
 
   //Marked Vertices
+  /*
   glUniform4fv(specular,1,red); 
 
   glUniform4fv(diffuse,1,red); 
   glUniform4fv(ambient,1,red); 
   activeRenderer->drawMarkedPoints();
-
+*/
   glutSwapBuffers();
+  activeRenderer->saveFrame();
 }
 
 void reshape(int w, int h)
@@ -174,6 +176,8 @@ Renderer::Renderer()
   width = 1024;
   height = 800;
   orientation = identity3D();
+  imgSaver = new ImageSaver("images/", "cs283hw1_");
+  fCount = 0;
 }
 
 Renderer::~Renderer()
@@ -241,7 +245,7 @@ void Renderer::init(int argc,char** argv)
   //generateMesh(triangles, vertices, edges, 1, 1, 0.025);
   generateMesh(triangles, vertices, edges, 1, 1, 0.025);
   //generateMesh2(triangles, vertices, edges, 1, 1, 0.05);
-  //loadOBJ(triangles, vertices, edges, "sphere.obj");
+  loadOBJ(triangles, vertices, edges, "sphere.obj");
 
   //Set up the engine
   engine = Engine();
@@ -293,7 +297,7 @@ void Renderer::draw()
 
         //front facing, hack for now
     if (curNorm * vec3(0,0,1) < 0) {
-      curNorm = -curNorm;
+      //curNorm = -curNorm;
     }
 
       for(vector<Vertex *>::iterator vt = curTriangle->vertices.begin();
@@ -330,4 +334,13 @@ void Renderer::draw()
   }
   glEnd();
 
+}
+
+void Renderer::saveFrame() {
+  if(fCount == 0) {
+    imgSaver->saveFrame();
+      activeRenderer->orientation = activeRenderer->orientation * 
+      rotation3D(vec3(0,1,0), -0.1);
+  }
+  fCount = (fCount + 1)%20;
 }

@@ -11,9 +11,9 @@ SOURCES := $(wildcard ./*.cpp)
 ifeq ($(shell sw_vers 2>/dev/null | grep Mac | awk '{ print $$2}'),Mac)
 	#Assume Mac
 	INCLUDE := -I./include/ -I/usr/X11/include
-	LIBRARY := \
+	LIBRARY := -L./lib/mac/ \
     	-L"/System/Library/Frameworks/OpenGL.framework/Libraries" \
-    	-lGL -lGLU -lm -lstdc++
+    	-lGL -lGLU -lm -lstdc++ -lfreeimage
 	FRAMEWORK := -framework GLUT -framework OpenGL
 	MACROS := -DOSX
 	PLATFORM := Mac
@@ -21,8 +21,8 @@ else
 	#Assume X11
 	INCLUDE := -I./include/ -I/usr/X11R6/include -I/sw/include \
 		-I/usr/sww/include -I/usr/sww/pkg/Mesa/include
-	LIBRARY := -L./lib/ -L/usr/X11R6/lib -L/sw/lib -L/usr/sww/lib \
-		-L/usr/sww/bin -L/usr/sww/pkg/Mesa/lib -lglut -lGLU -lGL -lX11
+	LIBRARY := -L./lib/nix -L/usr/X11R6/lib -L/sw/lib -L/usr/sww/lib \
+		-L/usr/sww/bin -L/usr/sww/pkg/Mesa/lib -lglut -lGLU -lGL -lX11 -lfreeimage
 	FRAMEWORK := 
 	MACROS := 
 	PLATFORM := *Nix

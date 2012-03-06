@@ -225,40 +225,39 @@ void Engine::updatePos(float timeStep)
     double intersectT = numeric_limits<double>::infinity();
     Triangle * collisionTri;
 
-
     vector<Triangle *> * startTris = triGrid->findTriangles(prevPos);
     vector<Triangle *> * endTris = triGrid->findTriangles(curPos);
     //cout << "start tris: " << startTris->size() << endl;
     //cout << "end tris: " << endTris->size() << endl;
-for(std::vector<Triangle *>::iterator iter = startTris->begin();
-    iter != startTris->end(); ++iter) {	      Triangle * tri = *iter;
-  double interT = vertexCollisionDetect(prevPos, curPos, tri, curVertex);
+    for(std::vector<Triangle *>::iterator iter = startTris->begin();
+        iter != startTris->end(); ++iter) {	      Triangle * tri = *iter;
+      double interT = vertexCollisionDetect(prevPos, curPos, tri, curVertex);
 
-  if (interT > 0){
-    vertCollision = true;
-    collisionTri = tri;
-    intersectT = min(intersectT, interT);
-  }    
+      if (interT > 0){
+        vertCollision = true;
+        collisionTri = tri;
+        intersectT = min(intersectT, interT);
+      }    
 
-} 
+    } 
 
-if(startTris != endTris) {
-  //cout << "boundary crossing" << endl;
+    if(startTris != endTris) {
+      //cout << "boundary crossing" << endl;
 
-  for(std::vector<Triangle *>::iterator iter = endTris->begin();
-      iter != endTris->end(); ++iter) {	
-    Triangle * tri = *iter;
-    double interT = vertexCollisionDetect(prevPos, curPos, tri, curVertex);
-    if (interT > 0){
-      vertCollision = true;
-      collisionTri = tri;
-      intersectT = min(intersectT, interT);
+      for(std::vector<Triangle *>::iterator iter = endTris->begin();
+          iter != endTris->end(); ++iter) {	
+        Triangle * tri = *iter;
+        double interT = vertexCollisionDetect(prevPos, curPos, tri, curVertex);
+        if (interT > 0){
+          vertCollision = true;
+          collisionTri = tri;
+          intersectT = min(intersectT, interT);
+        }
+      }
+
+    } else {
+      //cout << "no boundary cross" << endl;
     }
-  }
-
-} else {
-  //cout << "no boundary cross" << endl;
-}
 
     if(vertCollision) {
       curVertex->marked = 100;
@@ -277,7 +276,7 @@ if(startTris != endTris) {
       */
       if(normal * curVelocity < 0)
         normal = -normal;
-      float magVel = curVelocity * normal * 1.7;
+      float magVel = curVelocity * normal * 1.2;
       curVelocity = curVelocity - magVel*normal;
 
       curPos = curVertex->wPos + curVelocity * timeStep;
@@ -317,6 +316,14 @@ if(startTris != endTris) {
 if(curPos[1] < 0) {
   curPos[1] = 0;
 }*/
+
+//hardcoded sphere
+vec3 center = vec3(0,-0.3,0);
+float radsq = 0.04;
+if((curPos - center).length2() < radsq) {
+  curVelocity = vec3(0);
+  curPos = prevPos;
+}
     
 
     if (!curVertex->pinned) {

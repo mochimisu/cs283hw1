@@ -316,7 +316,7 @@ void loadOBJ(vector<Triangle*>& triangles, vector<Vertex*>& vertices, \
       vec3 worldPos = *v;
       //do transformations here for lack of better place to do them
       worldPos = 0.2 * worldPos;
-      worldPos -= vec3(0,0.2,0);
+      worldPos -= vec3(0,0.3,0);
 
       Vertex * newVert = new Vertex(worldPos, vec2(worldPos[0], worldPos[1]));
 

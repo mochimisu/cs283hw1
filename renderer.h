@@ -5,7 +5,7 @@
 #include "engine.h"
 #include "edge.h"
 #include <GL/glut.h>   
-
+#include "imageSaver.h"
 
 class Renderer {
 
@@ -18,6 +18,7 @@ public:
   void stepEngine();
   void mainLoop();
   void drawMarkedPoints();
+  void saveFrame();
 
   std::vector<Triangle *> triangles;
   std::vector<Vertex *> vertices;
@@ -28,6 +29,8 @@ public:
   int width, height;
   vec2 mousePos;
   mat4 orientation;
+  ImageSaver * imgSaver;
+  int fCount;
 };
 
 void setActiveRenderer(Renderer * newRenderer);
